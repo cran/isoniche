@@ -4,6 +4,9 @@
 #' \code{lmodel2::lmodel2()} (Model II regression). Each output row represents
 #' the relationship: \deqn{habitat\_y = intercept + slope \times habitat\_x}
 #'
+#' It is crucial to either place the columns with abundance for each habitat as
+#' the FIRST columns, or to explicitly state the habitat columns in \code{hab\_cols}.
+#'
 #' If the fitted intercept is negative, the relationship is flipped (axes swapped)
 #' to provide a biologically interpretable representation (negative intercepts
 #' are meaningless in this context) and model refitted.
@@ -12,6 +15,7 @@
 #'
 #' @param data A data frame of abundance data with one column per habitat.
 #' @param n_habitats Integer (>= 2). Number of habitat columns to use, starting at column 1.
+#' @param hab_cols A character vector of length \code{n\_habitats}, detailing the abundance columns. Currently defaults to first columns.
 #' @param flip_intercept Logical. If TRUE (default), flip axes when intercept < 0.
 #'
 #' @return A tibble with one row per habitat pair containing:
@@ -31,11 +35,10 @@
 #' @export
 fit_isodar <- function(
     data,
+    hab_cols = NULL,
     n_habitats = ncol(data),
     flip_intercept = TRUE
 ) {
-  message("Ensure you selected the appropriate columns and/or set the correct n_habitats:")
-  message(colnames(data[1:n_habitats]))
   stopifnot(is.data.frame(data))
   stopifnot(is.numeric(n_habitats), length(n_habitats) == 1,
             n_habitats >= 2, n_habitats <= ncol(data))

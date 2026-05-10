@@ -4,10 +4,17 @@
 \alias{fit_isodar}
 \title{Fit pairwise isodars between two or more habitats}
 \usage{
-fit_isodar(data, n_habitats = ncol(data), flip_intercept = TRUE)
+fit_isodar(
+  data,
+  hab_cols = NULL,
+  n_habitats = ncol(data),
+  flip_intercept = TRUE
+)
 }
 \arguments{
 \item{data}{A data frame of abundance data with one column per habitat.}
+
+\item{hab_cols}{A character vector of length \code{n\_habitats}, detailing the abundance columns. Currently defaults to first columns.}
 
 \item{n_habitats}{Integer (>= 2). Number of habitat columns to use, starting at column 1.}
 
@@ -29,6 +36,9 @@ Fits pairwise isodar relationships between all habitat pairs using
 the relationship: \deqn{habitat\_y = intercept + slope \times habitat\_x}
 }
 \details{
+It is crucial to either place the columns with abundance for each habitat as
+the FIRST columns, or to explicitly state the habitat columns in \code{hab\_cols}.
+
 If the fitted intercept is negative, the relationship is flipped (axes swapped)
 to provide a biologically interpretable representation (negative intercepts
 are meaningless in this context) and model refitted.

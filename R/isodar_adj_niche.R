@@ -2,12 +2,16 @@
 #'
 #' Reconstructs habitat abundances for each requested total abundance by solving a
 #' weighted least-squares system defined by the pairwise isodars:
-#' \deqn{habitat_y - slope \cdot habitat_x = intercept}
+#' \deqn{habitat\_y = intercept + slope \times habitat\_x }
 #'
 #' The reconstruction is constrained to be nonnegative and to sum to the requested
 #' total abundance (active-set heuristic). Niche breadth is then computed
 #' from the reconstructed habitat vector; currently defined as:
 #' \deqn{niche breadth = 1 - Gini(x)} of isodar-reconstructed abundances at a given N.
+#'
+#' To emphasize the intercept component, use baseline abundances provided by \code{abundances = NULL}.
+#' To emphasize the slope component, we recommend to set \code{abundances} to the highest n in your dataset.
+#' To see how niche breadth changes as a function of n, enter a vector of increasing abundances.
 #'
 #' @param isodars A data frame returned by \code{fit_isodar()}
 #' @param abundances Numeric vector of total abundances. If NULL, the minimal total
@@ -17,12 +21,12 @@
 #' \itemize{
 #'   \item \code{NULL}: equal weights
 #'   \item numeric vector of length \code{nrow(isodars)}
-#'   \item \code{"1/var"}: weights proportional to 1/sd^2
+#'   \item \code{"1/var"}: weights proportional to \code{1/sd^2}
 #'   \item \code{"sig"}: weights based on significance of intercepts, using \code{sig_weights}
 #' }
-#' @param method Character. Currently only \code{"gini"}
+#' @param method Character. Currently only \code{method = "gini"} available
 #' @param plot Logical. If TRUE, plots adjusted niche breadth versus total abundance
-#' @param max_search Integer. Maximum total abundance to search when \code{abundances = NULL},, in order to find baseline n
+#' @param max_search Integer. Maximum total abundance to search when \code{abundances = NULL}, in order to find baseline n
 #' @param alpha Numeric in (0, 1). Significance threshold used when \code{weights = "sig"}
 #' @param sig_weights Numeric vector of length 2 giving weights for significant and non-significant
 #'   isodars when \code{weights = "sig"}. Can be named \code{c(sig = , nonsig = )} or unnamed
@@ -50,7 +54,7 @@ isodar_adj_niche <- function(
     alpha = 0.1,
     sig_weights = c(sig = 1, nonsig = 0),
     method = c("gini"),
-    plot = TRUE,
+    plot = FALSE,
     max_search = 10000
 ) {
   method <- match.arg(method)
@@ -221,7 +225,7 @@ isodar_adj_niche <- function(
         "No total abundance up to max_search=", max_search,
         " yields occupancy in all habitats. Using a default sequence."
       )
-      abundances <- seq(1, 1000, length.out = 30)
+      abundances <- seq(10, 1000, length.out = 30)
     } else {
       abundances <- min(candidates[occupied])
     }

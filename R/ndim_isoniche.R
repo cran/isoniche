@@ -14,27 +14,9 @@
 #' @param weights Logical. If \code{TRUE}, habitats are weighted by inverse residual variance.
 #'   If \code{FALSE}, uniform weights are used.
 #' @param scale Logical. If \code{TRUE}, results are raised to the power of
-#'    \eqn{n_habitats - 1} to compensate for reduced sensitivity due to added dimensions.
+#'    \eqn{n\_habitats - 1} to compensate for reduced sensitivity due to added dimensions.
 #'
 #' @return A tibble with \code{vector}, \code{orthogonal}, and \code{n_habitats}.
-#'
-#' @details
-#' The dominant density-dependent axis \eqn{v} is obtained from the first right singular
-#' vector of the mean-centered abundance matrix \eqn{X_c}. For the vector component,
-#' per-habitat residual variances are estimated from residuals after removing this axis:
-#' \deqn{R = X_c - (X_c v) v^\top.}
-#'
-#' The orthogonal component is computed from the mean abundance vector \eqn{\mu}, but
-#' normalized to compositional space to remove dependence on total abundance:
-#' \deqn{p = \mu / \sum \mu.}
-#' The neutral (equal-use) composition is \eqn{p_0 = (1/n, \dots, 1/n)}.
-#'
-#' Baseline preference is then:
-#' \deqn{r = p - p_0.}
-#'
-#' For the orthogonal component, per-habitat residual variances are estimated from residuals
-#' after removing the neutral axis:
-#' \deqn{R_0 = X_c - (X_c v_0) v_0^\top.}
 #'
 #' @examples
 #' set.seed(1)

@@ -1,7 +1,7 @@
 Package: isoniche
 Title: Calculating Density-Independent Niche Breadth Indices from
         Abundance Data
-Version: 0.1.0
+Version: 0.1.1
 Authors@R: c(
     person("Shahar", "Dubiner", email="dubiner@mail.tau.ac.il", role = c("aut", "cre"),
     comment = c(ORCID = "0000-0003-1771-0087")),
@@ -15,11 +15,11 @@ Encoding: UTF-8
 RoxygenNote: 7.3.3
 Imports: tibble, dplyr, lmodel2
 NeedsCompilation: no
-Packaged: 2026-04-08 11:42:42 UTC; shadu
+Packaged: 2026-05-10 18:47:39 UTC; shadu
 Author: Shahar Dubiner [aut, cre] (ORCID:
     <https://orcid.org/0000-0003-1771-0087>),
   Itai Granot [aut],
   Jonathan Belmaker [aut]
 Maintainer: Shahar Dubiner <dubiner@mail.tau.ac.il>
 Repository: CRAN
-Date/Publication: 2026-04-13 15:10:02 UTC
+Date/Publication: 2026-05-10 19:00:02 UTC

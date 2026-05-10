@@ -11,7 +11,7 @@ isodar_adj_niche(
   alpha = 0.1,
   sig_weights = c(sig = 1, nonsig = 0),
   method = c("gini"),
-  plot = TRUE,
+  plot = FALSE,
   max_search = 10000
 )
 }
@@ -26,7 +26,7 @@ a default exploratory sequence is used}
 \itemize{
 \item \code{NULL}: equal weights
 \item numeric vector of length \code{nrow(isodars)}
-\item \code{"1/var"}: weights proportional to 1/sd^2
+\item \code{"1/var"}: weights proportional to \code{1/sd^2}
 \item \code{"sig"}: weights based on significance of intercepts, using \code{sig_weights}
 }}
 
@@ -36,11 +36,11 @@ a default exploratory sequence is used}
 isodars when \code{weights = "sig"}. Can be named \code{c(sig = , nonsig = )} or unnamed
 \code{c(sig, nonsig)}. Default is \code{c(sig = 1, nonsig = 0)}.}
 
-\item{method}{Character. Currently only \code{"gini"}}
+\item{method}{Character. Currently only \code{method = "gini"} available}
 
 \item{plot}{Logical. If TRUE, plots adjusted niche breadth versus total abundance}
 
-\item{max_search}{Integer. Maximum total abundance to search when \code{abundances = NULL},, in order to find baseline n}
+\item{max_search}{Integer. Maximum total abundance to search when \code{abundances = NULL}, in order to find baseline n}
 }
 \value{
 A tibble with one row per total abundance containing:
@@ -53,13 +53,17 @@ A tibble with one row per total abundance containing:
 \description{
 Reconstructs habitat abundances for each requested total abundance by solving a
 weighted least-squares system defined by the pairwise isodars:
-\deqn{habitat_y - slope \cdot habitat_x = intercept}
+\deqn{habitat\_y = intercept + slope \times habitat\_x }
 }
 \details{
 The reconstruction is constrained to be nonnegative and to sum to the requested
 total abundance (active-set heuristic). Niche breadth is then computed
 from the reconstructed habitat vector; currently defined as:
 \deqn{niche breadth = 1 - Gini(x)} of isodar-reconstructed abundances at a given N.
+
+To emphasize the intercept component, use baseline abundances provided by \code{abundances = NULL}.
+To emphasize the slope component, we recommend to set \code{abundances} to the highest n in your dataset.
+To see how niche breadth changes as a function of n, enter a vector of increasing abundances.
 }
 \examples{
 set.seed(1)
