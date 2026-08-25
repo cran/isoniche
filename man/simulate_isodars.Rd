@@ -55,6 +55,7 @@ from the three habitat abundances.
 }
 \examples{
 set.seed(1)
-simulate_isodars(1, 2, 5, 1, noise = 2, n = 10)
+simulate_isodars(1, 1.1, 1, 0, noise = 2, n = 10)
+simulate_isodars(1.5, 2, 5, 2, noise = 2, n = 10)
 
 }
