@@ -2,68 +2,88 @@
 % Please edit documentation in R/iai.R
 \name{iai}
 \alias{iai}
-\title{Compute the isodar-adjusted inequality (IAI) index}
+\title{Isodar-adjusted inequality (IAI)}
 \usage{
 iai(
   isodars,
   abundances = NULL,
   weights = NULL,
-  method = "gini",
-  plot = FALSE,
   scaled = TRUE,
+  min_occupancy = 1,
   max_search = 10000,
-  dim = "pairwise"
+  dim = NULL,
+  plot = FALSE,
+  method = "gini"
 )
 }
 \arguments{
-\item{isodars}{A data frame returned by fit_isodars().}
+\item{isodars}{Output of \code{\link[=fit_isodars]{fit_isodars()}}.}
 
-\item{abundances}{Numeric vector of total abundances. If NULL, the minimum
-total abundance yielding positive abundance in all habitats is searched.}
+\item{abundances}{Numeric vector of total abundances, or \code{NULL} for the
+density-independent value.}
 
-\item{weights}{Weighting scheme for pairwise reconstruction. Either NULL,
-a numeric vector, or "1/var". Not used for dim = "ndim" (1 isodar - no variance).}
+\item{weights}{Pairwise only: \code{NULL} (equal weights), \code{"1/var"} (inverse
+variance of each isodar's vertical residuals, \eqn{1/(sd^2(1+b^2))}), or a
+numeric vector with one weight per isodar.}
 
-\item{method}{Currently only "gini".}
+\item{scaled}{If \code{TRUE}, 1 - Gini is rescaled to 0-1, so that a species
+found in a single habitat scores 0 and an even spread scores 1.}
 
-\item{plot}{Logical. If TRUE, plots niche breadth against chosen total abundances.}
+\item{min_occupancy}{Individuals required in every habitat for the
+density-independent value.}
 
-\item{scaled}{Logical. If TRUE, coerces minimum possible IAI to be zero rather than 1/n.}
+\item{max_search}{Largest total searched for the density-independent value.}
 
-\item{max_search}{Maximum abundance searched when abundances = NULL.}
+\item{dim}{Optional; inferred from \code{isodars}. Kept for compatibility.}
 
-\item{dim}{Either "pairwise" or "ndim". Should match the dim used in fit_isodars().}
+\item{plot}{If \code{TRUE} and several abundances are given, plots the curve.}
+
+\item{method}{Inequality measure; only \code{"gini"} is currently implemented.}
 }
 \value{
-A tibble containing total abundance, niche breadth, and the
-reconstructed abundance of each habitat.
+A tibble with \code{total_abundance}, \code{niche_breadth}, one column per
+habitat (predicted abundance), and \code{note}.
 }
 \description{
-Reconstructs habitat abundances for one or more requested total
-abundances using either pairwise or n-dimensional  isodars.
+Computes niche breadth from fitted isodars by allocating a given total
+abundance among habitats according to the isodars and measuring the
+inequality of that allocation (1 - Gini). Evaluating it at several totals
+gives a rarefaction-like curve of niche breadth against abundance.
 }
 \details{
-With dim = "pairwise", the pairwise relationships are simultaneously
-fitted using (optionally weighted) total least squares (TLS).
+\strong{Allocation.} For pairwise isodars, the predicted abundances are those that
+minimise the (optionally weighted) sum of squared deviations from all
+pairwise isodar equations, \eqn{y - b x = a}, subject to summing to the
+total, with no habitat below zero. This constrained least-squares problem
+is solved exactly: if some habitats would be negative, the solution keeps
+the best set of habitats at zero (an active-set method, which can bring
+back a habitat dropped in an earlier step). For
+an n-dimensional isodar (a line), the allocation is the single point at
+which the line reaches the total; negative habitats are set to zero and
+the others rescaled in proportion to reach the total (so a clipped
+allocation is no longer on the line).
 
-With dim = "ndim", the n-dimensional TLS hyperplane is used directly.
-For a given total abundance, the reconstructed abundance vector is the
-point on the TLS hyperplane and total-abundance plane that is closest to
-equal allocation among habitats. Non-negative abundances are enforced
-using an active-set procedure.
+\strong{Density-independent niche breadth} (\code{abundances = NULL}) is evaluated at
+the smallest total (searched over integers) at which every used habitat
+holds at least \code{min_occupancy} individuals. If no total up to \code{max_search}
+achieves this, a single row with \code{NA} is returned.
 
-Niche breadth is defined as 1 - Gini(x).
+\strong{Absent habitats} (see \code{\link[=fit_isodars]{fit_isodars()}}) are fixed at 0 and count as 0 in
+the inequality, so they lower niche breadth; with a single used habitat,
+niche breadth is 0.
+
+\strong{Density-dependent niche breadth} is the value at a high total abundance,
+supplied through \code{abundances}.
 }
 \examples{
 set.seed(1)
-populations1 <- simulate_isodars(1, 1.1, 1, 0, noise = 2, n = 10)
- isodars1 <- fit_isodars(populations1, hab_cols=c("hab1","hab2","hab3"))
-  iai(isodars1)
-   iai(isodars1,abundances=c(6,10,16,20,40,60,130,260),weights="1/var",plot=TRUE)
-populations2 <- simulate_isodars(1.5, 2, 5, 2, noise = 2, n = 10)
- isodars2 <- fit_isodars(populations2, hab_cols=c("hab1","hab2","hab3"), dim="ndim")
-  iai(isodars2, dim="ndim", scaled = "FALSE")
-   iai(isodars2, dim="ndim")
-    iai(isodars2, dim="ndim",abundances=c(26,46,60,106,160,260),plot=TRUE)
-
+sim <- simulate_isodars(1.5, 1.5, 5, 5, noise = 1, n = 30)
+pw <- fit_isodars(sim, hab_cols = c("hab1", "hab2", "hab3"))
+iai(pw)                          # density-independent
+iai(pw, abundances = c(50, 500)) # density-dependent
+ln <- fit_isodars(sim, hab_cols = c("hab1", "hab2", "hab3"), dim = "ndim")
+iai(ln, abundances = 500)
+}
+\seealso{
+\code{\link[=fit_isodars]{fit_isodars()}}, \code{\link[=isoderr]{isoderr()}}, \code{\link[=pairwise_niche]{pairwise_niche()}}
 }

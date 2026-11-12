@@ -1,0 +1,40 @@
+bibentry(
+  bibtype = "Article",
+  header = "To cite the method, please use:",
+  title = "Why abundance-based indices of niche breadth are biased, and what can be done to improve them",
+  author = c(person("Itai", "Granot"), person("Shahar", "Dubiner"),
+             person("Jonathan", "Belmaker")),
+  journal = "Ecology Letters",
+  year = "2026",
+  note = "In revision. Itai Granot and Shahar Dubiner contributed equally.",
+  textVersion = paste(
+    "Granot, I., Dubiner, S. & Belmaker, J. (2026).",
+    "Why abundance-based indices of niche breadth are biased, and what can",
+    "be done to improve them. Ecology Letters (in revision).",
+    "Itai Granot and Shahar Dubiner contributed equally."
+  )
+)
+
+pkg_year <- if (!is.null(meta$`Date/Publication`)) {
+  substr(meta$`Date/Publication`, 1, 4)
+} else {
+  "2026"
+}
+
+bibentry(
+  bibtype = "Manual",
+  header = "To cite the package, please use:",
+  title = "isoniche: Isodar-Adjusted, Abundance-Independent Niche Breadth",
+  author = c(person("Itai", "Granot"), person("Shahar", "Dubiner"),
+             person("Jonathan", "Belmaker")),
+  year = pkg_year,
+  note = paste0("R package version ", meta$Version,
+                ". Itai Granot and Shahar Dubiner contributed equally."),
+  url = "https://itai811.github.io/isoniche/",
+  textVersion = paste0(
+    "Granot, I., Dubiner, S. & Belmaker, J. (", pkg_year, "). isoniche: ",
+    "Isodar-Adjusted, Abundance-Independent Niche Breadth. R package version ",
+    meta$Version, ". https://itai811.github.io/isoniche/. ",
+    "Itai Granot and Shahar Dubiner contributed equally."
+  )
+)

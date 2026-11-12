@@ -2,74 +2,89 @@
 % Please edit documentation in R/isoderr.R
 \name{isoderr}
 \alias{isoderr}
-\title{Bootstrap uncertainty of the isodar-adjusted inequality index}
+\title{Bootstrap uncertainty of the isodar-adjusted inequality}
 \usage{
 isoderr(
   data,
   hab_cols = NULL,
-  n_habitats = ncol(data),
+  n_habitats = NULL,
   dim = "pairwise",
   abundances = NULL,
   n_boot = 1000,
-  output = "SD",
+  output = c("SD", "SE", "CI"),
   conf_level = 0.95,
   weights = NULL,
   flip_intercept = TRUE,
+  min_occupancy = 1,
   max_search = 10000,
-  seed = NULL
+  seed = NULL,
+  ndim_method = "auto",
+  absent = "auto",
+  absent_max_count = 0,
+  absent_min_sites = 5
 )
 }
 \arguments{
-\item{data}{A data frame containing abundance columns for the habitats.}
+\item{data}{A data frame. Wide format: one row per site and one numeric
+column per habitat; \code{NA} marks a habitat that is absent from, or was not
+sampled at, a site. Long format: one row per species x site x habitat
+(see Details).}
 
-\item{hab_cols}{Character vector giving the habitat abundance columns.
-If NULL, the first n_habitats columns are used.}
+\item{hab_cols}{Wide format: character vector of habitat column names.}
 
-\item{n_habitats}{Number of habitats to use when hab_cols = NULL.}
+\item{n_habitats}{Alternatively, the number of habitat columns, taken from
+the start of \code{data}. One of \code{hab_cols} or \code{n_habitats} is required.}
 
-\item{dim}{Either "pairwise" (default) or "ndim".}
+\item{dim}{\code{"pairwise"} or \code{"ndim"}.}
 
-\item{abundances}{Numeric vector of total abundances. If NULL, the
-abundance selected by iai() from the original data is used.}
+\item{abundances}{Numeric vector of total abundances, or \code{NULL} for the
+density-independent value.}
 
 \item{n_boot}{Number of bootstrap replicates.}
 
-\item{output}{Either "SD", "SE", or "CI".}
+\item{output}{\code{"SD"} or \code{"SE"} (both the bootstrap standard deviation, which
+is the standard error of the estimate) or \code{"CI"} (percentile interval).}
 
-\item{conf_level}{Confidence level for CI. Default is 0.95.}
+\item{conf_level}{Confidence level for \code{output = "CI"}.}
 
-\item{weights}{Weighting scheme passed to iai().
-Only applicable to dim = "pairwise".}
+\item{weights}{Pairwise only: \code{NULL} (equal weights), \code{"1/var"} (inverse
+variance of each isodar's vertical residuals, \eqn{1/(sd^2(1+b^2))}), or a
+numeric vector with one weight per isodar.}
 
-\item{flip_intercept}{Passed to fit_isodars().}
+\item{flip_intercept}{Pairwise only. If \code{TRUE}, an isodar with a negative
+intercept and positive slope is expressed in the reverse direction
+(habitats swapped), so that intercepts are non-negative.}
 
-\item{max_search}{Maximum abundance searched when abundances = NULL.}
+\item{min_occupancy}{Individuals required in every habitat for the
+density-independent value.}
+
+\item{max_search}{Largest total searched for the density-independent value.}
 
 \item{seed}{Optional random-number seed.}
+
+\item{ndim_method}{\code{"auto"}, \code{"pca"} or \code{"latent"}; see Details.}
+
+\item{absent}{Habitats the species does not use: \code{"auto"} (detected from
+the data, see Details), \code{"none"}, or a character vector of habitat names
+(\code{character(0)} is the same as \code{"none"}).}
+
+\item{absent_max_count, absent_min_sites}{Thresholds for \code{absent = "auto"};
+see Details.}
 }
 \value{
-A tibble containing the total abundance, bootstrap estimate,
-and requested measure of uncertainty.
+A tibble with \code{total_abundance}, \code{niche_breadth} (estimate from the
+full data), \code{uncertainty} (SD/SE) or \code{lower} and \code{upper} (CI), and
+\code{n_valid} (bootstrap replicates that produced a value).
 }
 \description{
-Resamples the original abundance data with replacement, refits the
-isodars for each bootstrap replicate, and calculates the resulting
-isodar-adjusted niche breadth.
-}
-\details{
-With dim = "pairwise", pairwise TLS isodars are refitted for every
-bootstrap replicate.
-
-With dim = "ndim", an n-dimensional TLS hyperplane is refitted for
-every bootstrap replicate.
-
-The requested total abundances are determined once from the original
-dataset and then held constant across bootstrap replicates.
+Resamples sites with replacement (keeping all habitats of a site together),
+refits the isodars and recomputes the IAI for each resample. Absent
+habitats are identified once, on the full data, and kept fixed in every
+resample.
 }
 \examples{
 set.seed(1)
-populations1 <- simulate_isodars(1.5, 2, 5, 2, noise = 2, n = 10)
-isoderr(populations1, n_boot=100, weights=NULL,hab_cols=c("hab1","hab2","hab3"))
-isoderr(populations1, n_boot=100,output="CI",hab_cols=c("hab1","hab2","hab3"))
-
+sim <- simulate_isodars(1.5, 1.5, 5, 5, noise = 1, n = 30)
+isoderr(sim, hab_cols = c("hab1", "hab2", "hab3"), abundances = 100,
+        n_boot = 50, seed = 1)
 }

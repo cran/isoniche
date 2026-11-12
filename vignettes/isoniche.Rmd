@@ -1,0 +1,244 @@
+---
+title: "Get started with isoniche"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Get started with isoniche}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>", fig.width = 7,
+                      fig.height = 4.5)
+```
+
+**isoniche** estimates the habitat niche breadth of species from counts in
+several habitats, corrected for abundance. Classic indices (Levins' B,
+1 - Gini of habitat proportions, Shannon...) make rare species look like
+specialists: when a species is rare, its few individuals sit in its
+preferred habitat; when it is abundant, it spills into others. isoniche
+uses *isodars*, the relationships between a species' densities in pairs of
+habitats, to predict where individuals settle at any total abundance, and
+reports two numbers per species:
+
+* **density-independent (DI) niche breadth**: how widely the species uses
+  habitats when it is rare, at the *spillover abundance* where it first
+  occupies all the habitats it uses;
+* **density-dependent (DD) niche breadth**: how widely it uses habitats when
+  it is abundant.
+
+Both are on a 0-1 scale (0: one habitat only; 1: equal use of all
+habitats) and, unlike classic indices, they can be compared among species
+that differ in abundance.
+
+This vignette walks through a complete analysis. The other vignettes go
+into more detail:
+
+* `vignette("data-preparation")`: data formats, effort, choosing habitats,
+  absent habitats, grouping sites;
+* `vignette("diagnostics")`: when to trust an estimate and what to do when
+  a species is flagged;
+* `vignette("method")`: how the method works (Granot, Dubiner & Belmaker
+  2026).
+
+## What you need
+
+Counts of each species in two or more habitats, in many *replicates*:
+sites, or repeated surveys of the same site. Replicates should span a range
+of abundances, because isodars are estimated from how abundance in one
+habitat changes with abundance in another. As a rule of thumb, aim for at
+least 10 replicates per species, most of them sampling every habitat.
+
+```{r setup}
+library(isoniche)
+```
+
+## 1. Your data
+
+isoniche works on data in long format, one row per species x site x
+habitat, with the number of individuals counted. A habitat not sampled at a
+site simply has no row; a habitat sampled where the species was not found
+should have a row with a count of 0.
+
+The package includes counts of 325 reef fish species in three habitats
+(barrier reef, fringing reef, outer slope) at 13 sites around Moorea,
+French Polynesia:
+
+```{r data}
+head(moorea_fish)
+```
+
+If your data are a community matrix (samples x species, as used by
+**vegan**) with a separate table describing each sample, convert them with
+`community_to_long()`:
+
+```{r community}
+comm <- matrix(c(12, 0, 3,
+                  8, 2, 0,
+                  0, 5, 9),
+               nrow = 3, byrow = TRUE,
+               dimnames = list(NULL, c("sp_a", "sp_b", "sp_c")))
+samples <- data.frame(site = c("north", "north", "south"),
+                      habitat = c("reef", "lagoon", "reef"))
+community_to_long(comm, samples, site = "site", habitat = "habitat")
+```
+
+Several samples from the same site and habitat are pooled, and their
+effort (here the number of samples) is summed into an `effort` column. If
+samples differ in effort, for example in transect area, give that column
+to `community_to_long()` and pass it on as `effort =` to the functions
+below; set `reference_effort` to a natural unit such as one standard
+transect. See `vignette("data-preparation")`.
+
+## 2. Check coverage
+
+Before estimating anything, check how well each species was sampled:
+
+```{r coverage}
+cov <- check_coverage(moorea_fish, species = "species", site = "site",
+                      habitat = "habitat", abundance = "abundance")
+cov[cov$species == "Chaetodon ornatissimus", ]
+table(cov$status)
+```
+
+For each species and habitat, `n_sites` is the number of sites where the
+species was recorded, `n_occupied` the number where it was found in this
+habitat, and `status` says how the habitat will be treated: `"used"`,
+`"absent"` (never found in it although it was sampled at several sites
+where the species occurred; it counts as 0 and lowers niche breadth) or
+`"undersampled"` (no records, but too few sites to tell).
+
+## 3. Estimate niche breadth
+
+We analyse 12 species that were recorded at almost every site, in every
+habitat. `niche_breadth()` fits the isodars of every species, computes DI
+and DD niche breadth and the spillover abundance, and gives bootstrap
+confidence intervals by resampling whole sites (`n_boot` replicates; we use
+99 to keep this vignette fast, but use 999 or more for publication):
+
+```{r nb}
+species <- c("Balistapus undulatus", "Chaetodon ornatissimus",
+             "Chaetodon ulietensis", "Ctenochaetus binotatus",
+             "Dascyllus flavicaudus", "Forcipiger longirostris",
+             "Halichoeres marginatus", "Heniochus chrysostomus",
+             "Parupeneus multifasciatus", "Sargocentron microstoma",
+             "Scarus schlegeli", "Zebrasoma scopas")
+fish <- moorea_fish[moorea_fish$species %in% species, ]
+
+nb <- niche_breadth(fish, species = "species", site = "site",
+                    habitat = "habitat", abundance = "abundance",
+                    n_boot = 99, seed = 1)
+nb
+```
+
+The result is a table with one row per species. The main columns:
+
+* `nb_di` (with `nb_di_lower`, `nb_di_upper`): DI niche breadth and its
+  confidence interval;
+* `spillover_abundance`: the total abundance (individuals per sampling
+  unit, here per site) at which the species first occupies every habitat it
+  uses; DI niche breadth is measured there;
+* `nb_dd`: DD niche breadth, the limit at high abundance;
+* `flags`: diagnostics raised for the species.
+
+```{r nb-table}
+res <- as.data.frame(nb[c("species", "nb_di", "nb_di_lower", "nb_di_upper",
+                          "spillover_abundance", "nb_dd", "nb_dd_lower",
+                          "nb_dd_upper")])
+res[-1] <- round(res[-1], 2)
+res[order(-res$nb_di), ]
+```
+
+A species with high DI niche breadth uses several habitats even when rare:
+its isodar intercepts are small, so it has no strongly preferred habitat. A
+species with high DD niche breadth spreads evenly among habitats when
+abundant: its isodar slopes are close to 1, so its habitats fill at similar
+rates. The two need not agree; a species can be a specialist when rare and
+a generalist when abundant, or the reverse.
+
+## 4. Check the diagnostics
+
+Every species gets logical `flag_*` columns. `summary()` counts them and
+explains what to do about each:
+
+```{r summary}
+summary(nb)
+```
+
+`reversal` and `abandoned` describe the species rather than a problem: the
+ranking of habitats changes with abundance, or a habitat used when the
+species is rare is left empty when it is abundant. The others are warnings.
+Here most species are flagged `unstable_bootstrap`: with only 13 sites, the
+confidence intervals are wide (see the table above), and several DD
+intervals reach 0. This is a property of the data, not of the method: niche
+breadth is estimated from the spread of densities across sites, and 13
+sites constrain it only loosely. More replicates narrow the intervals.
+
+To keep only species without warnings:
+
+```{r clean}
+s <- summary(nb)
+clean <- nb[nb$species %in% s$clean, ]
+nrow(clean)
+```
+
+See `vignette("diagnostics")` for each flag.
+
+## 5. Niche breadth across abundances
+
+DI and DD niche breadth are the two ends of a curve: niche breadth as a
+function of total abundance, much like a rarefaction curve. `iai_curve()`
+computes it, and `plot()` draws it (here for four species):
+
+```{r curve, fig.height = 5}
+curves <- iai_curve(nb, n_boot = 49, seed = 1)
+plot(curves, species = c("Chaetodon ornatissimus", "Forcipiger longirostris",
+                         "Scarus schlegeli", "Zebrasoma scopas"))
+```
+
+Each curve starts at the species' spillover abundance (filled point, DI
+niche breadth) and approaches DD niche breadth (dash on the right); dotted
+lines are the bootstrap band and crosses mark preference reversals.
+
+## 6. Compare species
+
+Because the estimates do not depend on how abundant a species happened to
+be, they can be compared among species, or related to traits. Ranks by DI
+and by DD niche breadth can differ:
+
+```{r compare, fig.width = 5, fig.height = 5}
+plot(nb$nb_di, nb$nb_dd, pch = 19, xlim = c(0, 1), ylim = c(0, 1),
+     xlab = "DI niche breadth", ylab = "DD niche breadth")
+abline(0, 1, lty = 2)
+cor(nb$nb_di, nb$nb_dd, method = "spearman")
+```
+
+Where two species' curves cross, which one is the broader generalist
+depends on the abundance at which they are compared. These crossings are
+listed in a table:
+
+```{r crossings}
+head(attr(curves, "crossings"))
+```
+
+## 7. Reporting
+
+When reporting results, state:
+
+* the habitats included, and which were treated as absent for each species;
+* the sampling unit of abundance (`reference_effort`; see
+  `vignette("data-preparation")`): DI niche breadth and spillover abundance
+  depend on it, DD niche breadth does not;
+* the isodar method (`dim`, by default pairwise isodars with inverse-variance
+  weights) and where DD niche breadth was evaluated (`dependent_at`, by
+  default the asymptote);
+* the number of bootstrap replicates and the diagnostic thresholds, and how
+  flagged species were handled;
+* the package version (`packageVersion("isoniche")`) and the paper
+  (`citation("isoniche")`).
+
+## References
+
+Granot, I., Dubiner, S. & Belmaker, J. (2026). Why abundance-based indices of
+niche breadth are biased, and what can be done to improve them. *Ecology
+Letters* (in revision). Itai Granot and Shahar Dubiner contributed equally.

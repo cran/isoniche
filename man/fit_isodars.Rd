@@ -2,51 +2,182 @@
 % Please edit documentation in R/fit_isodars.R
 \name{fit_isodars}
 \alias{fit_isodars}
-\title{Fit pairwise or n-dimensional isodars using total least squares}
+\title{Fit isodars}
 \usage{
 fit_isodars(
   data,
   hab_cols = NULL,
-  n_habitats = ncol(data),
+  n_habitats = NULL,
+  dim = c("pairwise", "ndim"),
   flip_intercept = TRUE,
-  dim = "pairwise"
+  ndim_method = c("auto", "pca", "latent"),
+  absent = "auto",
+  absent_max_count = 0,
+  absent_min_sites = 5,
+  species = NULL,
+  site = NULL,
+  habitat = NULL,
+  abundance = NULL,
+  effort = NULL,
+  reference_effort = NULL
 )
 }
 \arguments{
-\item{data}{A data frame containing abundance columns for the habitats.}
+\item{data}{A data frame. Wide format: one row per site and one numeric
+column per habitat; \code{NA} marks a habitat that is absent from, or was not
+sampled at, a site. Long format: one row per species x site x habitat
+(see Details).}
 
-\item{hab_cols}{Character vector giving the habitat abundance columns.
-If \code{NULL}, the first \code{n_habitats} columns are used.}
+\item{hab_cols}{Wide format: character vector of habitat column names.}
 
-\item{n_habitats}{Number of habitats to use when \code{hab_cols = NULL}.}
+\item{n_habitats}{Alternatively, the number of habitat columns, taken from
+the start of \code{data}. One of \code{hab_cols} or \code{n_habitats} is required.}
 
-\item{flip_intercept}{Logical. If TRUE, pairwise relationships with a
-negative intercept are reversed so that the reported intercept is positive.}
+\item{dim}{\code{"pairwise"} or \code{"ndim"}.}
 
-\item{dim}{Either \code{"pairwise"} (default) or \code{"ndim"}.}
+\item{flip_intercept}{Pairwise only. If \code{TRUE}, an isodar with a negative
+intercept and positive slope is expressed in the reverse direction
+(habitats swapped), so that intercepts are non-negative.}
+
+\item{ndim_method}{\code{"auto"}, \code{"pca"} or \code{"latent"}; see Details.}
+
+\item{absent}{Habitats the species does not use: \code{"auto"} (detected from
+the data, see Details), \code{"none"}, or a character vector of habitat names
+(\code{character(0)} is the same as \code{"none"}).}
+
+\item{absent_max_count, absent_min_sites}{Thresholds for \code{absent = "auto"};
+see Details.}
+
+\item{species, site, habitat, abundance, effort}{Long format: names of the
+columns holding species (optional; without it the data are one species),
+site (or other replicate), habitat, abundance (counts) and sampling
+effort (optional; without it every row has effort 1).}
+
+\item{reference_effort}{Long format: the sampling unit in which densities
+are expressed (default: median effort); see Details.}
 }
 \value{
-For \code{dim = "pairwise"}, a tibble with one row for every
-habitat pair, containing the coefficients of the TLS regression.
-For \code{dim = "ndim"}, a tibble containing the coefficients
-of the n-dimensional TLS hyperplane.
+For \code{dim = "pairwise"}, a tibble of class \code{isodars_pairwise} with
+one row per pair of used habitats: \code{habitat_x}, \code{habitat_y}, \code{intercept},
+\code{slope}, \code{sd} (SD of perpendicular residuals), \code{n_sites}, and \code{flipped}
+(whether the habitats were swapped). For \code{dim = "ndim"}, a tibble of class
+\code{isodar_line} with one row per habitat: \code{habitat}, \code{mean}, \code{direction}
+(both 0 for absent habitats); attributes \code{var_explained} (share of
+variance along the line, \code{"pca"} only), \code{eigenvalues}, \code{n_sites} and
+\code{ndim_method}. Both have attributes \code{habitats} (all habitats), \code{absent}
+and \code{undersampled}.
+
+In long format, a tibble of class \code{isodar_fits} with one row per species:
+\code{species} (if given), \code{fit} (the fit as above, or \code{NULL} if it failed),
+\code{counts} and \code{effort} (site x habitat matrices), \code{n_sites} and \code{note}
+(warnings and errors from fitting). One summary warning is given if any
+species could not be fitted.
 }
 \description{
-Fits isodar relationships using total least squares (TLS), which minimizes
-orthogonal distances between observations and the fitted relationship.
+Fits isodars to abundances (or densities) recorded in two or more habitats
+at a set of sites (or other replicates, such as years). Data are either in
+wide format (one species; one row per site, one column per habitat) or in
+long format (one or many species; one row per species x site x habitat).
 }
 \details{
-With \code{dim = "pairwise"} (default), TLS relationships are fitted between
-every pair of habitats.
+\strong{Input formats.} In wide format, give \code{hab_cols} (or \code{n_habitats}); the
+values are used as they are, and the result is a single fit. In long
+format, give the column names \code{site}, \code{habitat} and \code{abundance} (and
+optionally \code{species} and \code{effort}); the result is an \code{isodar_fits} table
+with one row per species, which \code{\link[=niche_breadth]{niche_breadth()}} and \code{\link[=iai_curve]{iai_curve()}} take.
+Replicates may be sites or time steps (for example, years at one site); in
+long format they go in the \code{site} column. A site x habitat combination
+that appears for any species is taken as sampled, and a species without a
+row there has 0 individuals there; a habitat missing at a site simply has
+no rows. Sites where a species has no individuals in any habitat carry no
+information on its habitat selection and are dropped for that species.
 
-With \code{dim = "ndim"}, a single multidimensional TLS hyperplane is fitted
-using all habitats simultaneously.
+\strong{Effort and densities.} Isodars relate densities. In long format,
+density = abundance / effort x \code{reference_effort}. Effort may be an area, a
+transect length (constant width) or a unitless relative effort, but must
+be the same kind of measure in every row; it must be the same for every
+row of a site x habitat combination. \code{reference_effort} (default: the
+median effort of sampled site x habitat combinations) is the sampling unit
+in which abundances are expressed: "one individual" in the
+density-independent niche breadth, the spillover abundance and the x-axis
+of \code{\link[=iai_curve]{iai_curve()}} all mean one individual per \code{reference_effort}.
+Density-independent niche breadth and spillover abundance therefore depend
+on this unit; slopes and density-dependent niche breadth do not. The
+default depends on how samples happen to be pooled, so set
+\code{reference_effort} to a natural unit (for example, the area of one standard
+transect) and use the same value for every species you compare.
+
+In wide format, rows are used as given: unlike long format, a site with 0
+in every habitat is kept (it pulls the isodars toward the origin), so
+remove such rows if they mean the species was absent from the site.
+
+\strong{Pairwise isodars} (\code{dim = "pairwise"}) are fitted for every pair of
+habitats by total least squares (TLS), which is identical to major-axis
+regression in two dimensions. Each pair uses every site where both habitats
+were recorded (non-missing), so sites lacking some habitats still contribute.
+When many sites are incomplete, both pairwise isodars and the latent line
+(below) use all of them; fitting both is a useful check.
+
+\strong{The n-dimensional isodar} (\code{dim = "ndim"}) is a line. Under the ideal
+free distribution, equal fitness across \eqn{n} habitats imposes \eqn{n-1}
+equalities, so abundances across habitats change along a single line as
+total abundance changes, whatever the number of habitats. The line is
+described by a point (\code{mean}) and a unit direction vector (\code{direction}),
+with one component per habitat. Each component is the rate at which that
+habitat gains individuals as total abundance rises (the analogue of the
+isodar slope); where the line enters each habitat reflects its
+density-independent preference (the analogue of the intercept). Every
+pairwise isodar can be derived from it, and with two habitats it is the
+classic isodar.
+
+With \code{ndim_method = "pca"} the line is the first principal axis of the
+covariance matrix of complete sites (the TLS line). With
+\code{ndim_method = "latent"} it is estimated from all sites with at least two
+recorded habitats, as a one-factor model,
+\eqn{N_{hs} = \mu_h + v_h t_s + \varepsilon_{hs}}, where \eqn{t_s} is the
+position of site \eqn{s} along the isodar (requires \pkg{glmmTMB}).
+\code{ndim_method = "auto"} uses \code{"pca"} when every site is complete and
+\code{"latent"} otherwise.
+
+\strong{Absent habitats.} A habitat that the species never uses carries no
+information about habitat selection, and an isodar cannot be fitted to it.
+Such a habitat is excluded from the fit and fixed at 0 abundance; \code{\link[=iai]{iai()}}
+still counts it, as 0, in the inequality, so it lowers niche breadth. With
+\code{absent = "auto"} a habitat is declared absent if the species was recorded
+in it no more than \code{absent_max_count} times in total (in the units of
+wide \code{data}; as counts, before conversion to densities, in long format),
+and the habitat was sampled at no fewer than \code{absent_min_sites}
+sites where the species was present in another habitat. A habitat with
+(almost) no records but fewer such sites is \emph{undersampled}: it is kept in
+the fit, with a warning, because its zeros may reflect too little sampling
+rather than avoidance. A habitat used at low density and abandoned at high
+density is not absent; it is fitted, and \code{\link[=iai]{iai()}} clips it to 0 at totals
+where the isodars predict negative abundance. With the default
+\code{absent_max_count = 0}, a single individual makes a habitat used, which
+can change the spillover abundance a lot; raise \code{absent_max_count} if a
+few stray individuals should not count.
+
+Absent habitats lower niche breadth, so species should be compared over the
+same set of habitats, namely the habitats available to them.
 }
 \examples{
 set.seed(1)
-populations1 <- simulate_isodars(1, 1.1, 1, 0, noise = 2, n = 10)
-  fit_isodars(populations1, hab_cols=c("hab1","hab2","hab3"))
-populations2 <- simulate_isodars(1.5, 2, 5, 2, noise = 2, n = 10)
-  fit_isodars(populations2, hab_cols=c("hab1","hab2","hab3"))
+sim <- simulate_isodars(1.5, 1.5, 5, 5, noise = 1, n = 30)
+fit_isodars(sim, hab_cols = c("hab1", "hab2", "hab3"))
+fit_isodars(sim, hab_cols = c("hab1", "hab2", "hab3"), dim = "ndim")
 
+# long format, several species
+fish <- moorea_fish[moorea_fish$species \%in\% c("Acanthurus nigrofuscus",
+  "Scarus schlegeli", "Zebrasoma scopas"), ]
+fits <- fit_isodars(fish, species = "species", site = "site",
+                    habitat = "habitat", abundance = "abundance")
+fits
+fits$fit[[which(fits$species == "Scarus schlegeli")]]
+}
+\references{
+Morris, D.W. (1987). Spatial scale and the cost of
+density-dependent habitat selection. \emph{Evolutionary Ecology}, 1, 379–388.
+}
+\seealso{
+\code{\link[=niche_breadth]{niche_breadth()}}, \code{\link[=iai]{iai()}}, \code{\link[=isoderr]{isoderr()}}
 }

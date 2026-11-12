@@ -1,639 +1,246 @@
-#' Compute the isodar-adjusted inequality (IAI) index
+#' Isodar-adjusted inequality (IAI)
 #'
-#' Reconstructs habitat abundances for one or more requested total
-#' abundances using either pairwise or n-dimensional  isodars.
+#' Computes niche breadth from fitted isodars by allocating a given total
+#' abundance among habitats according to the isodars and measuring the
+#' inequality of that allocation (1 - Gini). Evaluating it at several totals
+#' gives a rarefaction-like curve of niche breadth against abundance.
 #'
-#' With dim = "pairwise", the pairwise relationships are simultaneously
-#' fitted using (optionally weighted) total least squares (TLS).
+#' @details
+#' **Allocation.** For pairwise isodars, the predicted abundances are those that
+#' minimise the (optionally weighted) sum of squared deviations from all
+#' pairwise isodar equations, \eqn{y - b x = a}, subject to summing to the
+#' total, with no habitat below zero. This constrained least-squares problem
+#' is solved exactly: if some habitats would be negative, the solution keeps
+#' the best set of habitats at zero (an active-set method, which can bring
+#' back a habitat dropped in an earlier step). For
+#' an n-dimensional isodar (a line), the allocation is the single point at
+#' which the line reaches the total; negative habitats are set to zero and
+#' the others rescaled in proportion to reach the total (so a clipped
+#' allocation is no longer on the line).
 #'
-#' With dim = "ndim", the n-dimensional TLS hyperplane is used directly.
-#' For a given total abundance, the reconstructed abundance vector is the
-#' point on the TLS hyperplane and total-abundance plane that is closest to
-#' equal allocation among habitats. Non-negative abundances are enforced
-#' using an active-set procedure.
+#' **Density-independent niche breadth** (`abundances = NULL`) is evaluated at
+#' the smallest total (searched over integers) at which every used habitat
+#' holds at least `min_occupancy` individuals. If no total up to `max_search`
+#' achieves this, a single row with `NA` is returned.
 #'
-#' Niche breadth is defined as 1 - Gini(x).
+#' **Absent habitats** (see [fit_isodars()]) are fixed at 0 and count as 0 in
+#' the inequality, so they lower niche breadth; with a single used habitat,
+#' niche breadth is 0.
 #'
-#' @param isodars A data frame returned by fit_isodars().
-#' @param abundances Numeric vector of total abundances. If NULL, the minimum
-#'   total abundance yielding positive abundance in all habitats is searched.
-#' @param weights Weighting scheme for pairwise reconstruction. Either NULL,
-#'   a numeric vector, or "1/var". Not used for dim = "ndim" (1 isodar - no variance).
-#' @param method Currently only "gini".
-#' @param plot Logical. If TRUE, plots niche breadth against chosen total abundances.
-#' @param scaled Logical. If TRUE, coerces minimum possible IAI to be zero rather than 1/n.
-#' @param max_search Maximum abundance searched when abundances = NULL.
-#' @param dim Either "pairwise" or "ndim". Should match the dim used in fit_isodars().
+#' **Density-dependent niche breadth** is the value at a high total abundance,
+#' supplied through `abundances`.
 #'
-#' @return A tibble containing total abundance, niche breadth, and the
-#'   reconstructed abundance of each habitat.
+#' @param isodars Output of [fit_isodars()].
+#' @param abundances Numeric vector of total abundances, or `NULL` for the
+#'   density-independent value.
+#' @param weights Pairwise only: `NULL` (equal weights), `"1/var"` (inverse
+#'   variance of each isodar's vertical residuals, \eqn{1/(sd^2(1+b^2))}), or a
+#'   numeric vector with one weight per isodar.
+#' @param scaled If `TRUE`, 1 - Gini is rescaled to 0-1, so that a species
+#'   found in a single habitat scores 0 and an even spread scores 1.
+#' @param min_occupancy Individuals required in every habitat for the
+#'   density-independent value.
+#' @param max_search Largest total searched for the density-independent value.
+#' @param dim Optional; inferred from `isodars`. Kept for compatibility.
+#' @param plot If `TRUE` and several abundances are given, plots the curve.
+#' @param method Inequality measure; only `"gini"` is currently implemented.
 #'
+#' @return A tibble with `total_abundance`, `niche_breadth`, one column per
+#'   habitat (predicted abundance), and `note`.
+#' @seealso [fit_isodars()], [isoderr()], [pairwise_niche()]
 #' @examples
 #' set.seed(1)
-#' populations1 <- simulate_isodars(1, 1.1, 1, 0, noise = 2, n = 10)
-#'  isodars1 <- fit_isodars(populations1, hab_cols=c("hab1","hab2","hab3"))
-#'   iai(isodars1)
-#'    iai(isodars1,abundances=c(6,10,16,20,40,60,130,260),weights="1/var",plot=TRUE)
-#' populations2 <- simulate_isodars(1.5, 2, 5, 2, noise = 2, n = 10)
-#'  isodars2 <- fit_isodars(populations2, hab_cols=c("hab1","hab2","hab3"), dim="ndim")
-#'   iai(isodars2, dim="ndim", scaled = "FALSE")
-#'    iai(isodars2, dim="ndim")
-#'     iai(isodars2, dim="ndim",abundances=c(26,46,60,106,160,260),plot=TRUE)
-#'
+#' sim <- simulate_isodars(1.5, 1.5, 5, 5, noise = 1, n = 30)
+#' pw <- fit_isodars(sim, hab_cols = c("hab1", "hab2", "hab3"))
+#' iai(pw)                          # density-independent
+#' iai(pw, abundances = c(50, 500)) # density-dependent
+#' ln <- fit_isodars(sim, hab_cols = c("hab1", "hab2", "hab3"), dim = "ndim")
+#' iai(ln, abundances = 500)
 #' @export
-iai <- function(
- isodars,
- abundances = NULL,
- weights = NULL,
- method = "gini",
- plot = FALSE,
- scaled = TRUE,
- max_search = 10000,
- dim = "pairwise"
-) {
-
-  if (!is.data.frame(isodars)) {
- stop("'isodars' must be a data frame.")
-  }
-  dim <- match.arg(dim, c("pairwise", "ndim"))
+iai <- function(isodars, abundances = NULL, weights = NULL, scaled = TRUE,
+                min_occupancy = 1, max_search = 10000, dim = NULL,
+                plot = FALSE, method = "gini") {
   method <- match.arg(method, "gini")
-  if (!is.logical(plot) ||
-length(plot) != 1L ||
-is.na(plot)) {
- stop("'plot' must be TRUE or FALSE.")
+  scaled <- isTRUE(as.logical(scaled))
+  if (!is.null(abundances) &&
+      (!is.numeric(abundances) || !all(is.finite(abundances)) || any(abundances < 0))) {
+    stop("'abundances' must be NULL or finite, non-negative numbers.", call. = FALSE)
   }
-  if (!is.numeric(max_search) ||
-length(max_search) != 1L ||
-!is.finite(max_search) ||
-max_search < 1) {
- stop("'max_search' must be a single positive number.")
+  kind <- if (inherits(isodars, "isodar_line")) "ndim" else
+    if (inherits(isodars, "isodars_pairwise")) "pairwise" else NA
+  if (is.na(kind)) {
+    # plain data frames from older code
+    kind <- if (all(c("habitat_x", "habitat_y") %in% names(isodars))) "pairwise" else
+      stop("'isodars' must be the output of fit_isodars().", call. = FALSE)
   }
-  max_search <- floor(max_search)
+  if (!is.null(dim) && !identical(dim, kind)) {
+    stop("'dim = \"", dim, "\"' does not match the fitted isodars (", kind, ").",
+         call. = FALSE)
+  }
+  alloc <- if (kind == "pairwise") pairwise_allocator(isodars, weights) else
+    line_allocator(isodars)
+  habitats <- attr(alloc, "habitats")
+  H <- length(habitats)
+  absent <- attr(isodars, "absent")
+  used <- !habitats %in% absent
+  absent_note <- if (any(!used)) {
+    paste0("absent habitat(s) fixed at 0: ", paste(habitats[!used], collapse = ", "))
+  } else ""
 
-  # PAIRWISE
-
-  if (dim == "pairwise") {
-
- req <- c(
-"habitat_x",
-"habitat_y",
-"slope",
-"intercept"
- )
- missing <- setdiff(req, names(isodars))
- if (length(missing) > 0L) {
-stop(
-  "Missing required columns: ",
-  paste(missing, collapse = ", ")
-)
- }
-
- habitats <- sort(unique(c(
-as.character(isodars$habitat_x),
-as.character(isodars$habitat_y)
- )))
- H <- length(habitats)
- if (H < 2L) {
-stop("Need at least two habitats.")
- }
-
- # Weights
-
- if (is.null(weights)) {
-w <- rep(1, nrow(isodars))
- } else if (is.numeric(weights)) {
-if (length(weights) != nrow(isodars)) {
-  stop(
- "Numeric weights must have length nrow(isodars)."
-  )
+  if (is.null(abundances)) {
+    first_ok <- NA_real_
+    for (Total in seq_len(max_search)) {
+      x <- alloc(Total)
+      if (all(is.finite(x)) && all(x[used] >= min_occupancy - 1e-9)) {
+        first_ok <- Total
+        break
+      }
+    }
+    if (is.na(first_ok)) {
+      note <- paste0("no total up to ", max_search, " occupies all ",
+                     if (any(!used)) "used " else "", "habitats")
+      out <- tibble::as_tibble(c(list(total_abundance = NA_real_, niche_breadth = NA_real_),
+                                 stats::setNames(as.list(rep(NA_real_, H)), habitats),
+                                 list(note = note)))
+      return(out)
+    }
+    abundances <- first_ok
+  }
+  rows <- lapply(as.numeric(abundances), function(Total) {
+    x <- alloc(Total)
+    nb <- 1 - gini(x)
+    if (scaled) nb <- min(max((nb - 1 / H) * H / (H - 1), 0), 1) # rounding
+    note <- if (any(x[used] == 0)) "habitat(s) at zero" else ""
+    note <- paste(c(note, absent_note)[c(note, absent_note) != ""], collapse = "; ")
+    c(list(total_abundance = Total, niche_breadth = nb),
+      stats::setNames(as.list(x), habitats),
+      list(note = note))
+  })
+  out <- tibble::as_tibble(do.call(rbind.data.frame, rows))
+  if (plot && nrow(out) > 1) {
+    graphics::plot(out$total_abundance, out$niche_breadth, type = "l",
+                   xlab = "Total abundance", ylab = "Niche breadth (IAI)")
+  }
+  out
 }
 
-if (any(!is.finite(weights))) {
-  stop("Weights must be finite.")
-}
-if (any(weights < 0)) {
-  stop("Weights must be non-negative.")
-}
-w <- weights
-
- } else if (
-is.character(weights) &&
-length(weights) == 1L &&
-weights == "1/var"
- ) {
-
-if (!"sd" %in% names(isodars)) {
-  stop(
- "weights = '1/var' requires a column named 'sd'."
-  )
-}
-w <- 1 / pmax(
-  as.numeric(isodars$sd)^2,
-  1e-12
-)
- } else {
-stop(
-  "weights must be NULL, a numeric vector, or '1/var'."
-)
- }
-
- # Remove unusable rows
-
- ok <- (
-is.finite(isodars$slope) &
-  is.finite(isodars$intercept) &
-  is.finite(w) &
-  w > 0
- )
- is2 <- isodars[
-ok,
-,
-drop = FALSE
- ]
- w2 <- w[ok]
- if (nrow(is2) == 0L) {
-stop(
-  "No usable isodars remain after filtering."
-)
- }
-
- # Remove duplicate directed relationships
-
- key <- paste(
-is2$habitat_x,
-is2$habitat_y,
-sep = "->"
- )
- if (anyDuplicated(key)) {
-o <- order(
-  key,
-  -w2
-)
-is2 <- is2[
-  o,
-  ,
-  drop = FALSE
-]
-w2 <- w2[o]
-key <- paste(
-  is2$habitat_x,
-  is2$habitat_y,
-  sep = "->"
-)
-keep <- !duplicated(key)
-is2 <- is2[
-  keep,
-  ,
-  drop = FALSE
-]
-w2 <- w2[keep]
- }
-
-
- # Construct equations:
- # y - slope*x = intercept
-
- m <- nrow(is2)
- A <- matrix(
-0,
-nrow = m,
-ncol = H
- )
- b <- as.numeric(
-is2$intercept
- )
- for (i in seq_len(m)) {
-xi <- match(
-  is2$habitat_x[i],
-  habitats
-)
-yi <- match(
-  is2$habitat_y[i],
-  habitats
-)
-A[i, yi] <- 1
-A[i, xi] <- -is2$slope[i]
- }
-
-
- # Weighted normal equations
-
- w2sq <- w2^2
- Q <- crossprod(
-A,
-A * w2sq
- )
- rhs <- crossprod(
-A,
-b * w2sq
- )
-
- # Pairwise constrained solver
-
- solve_total <- function(Total) {
-if (!is.finite(Total) ||
- Total < 0) {
-  return(rep(NA_real_, H))
+gini <- function(x) {
+  x <- sort(as.numeric(x))
+  n <- length(x)
+  if (sum(x) <= 0) return(NA_real_)
+  (2 * sum(seq_len(n) * x) / (n * sum(x))) - (n + 1) / n
 }
 
-if (Total == 0) {
-  return(rep(0, H))
-}
-free <- rep(
-  TRUE,
-  H
-)
-x <- rep(
-  0,
-  H
-)
-
-for (iter in seq_len(H + 2L)) {
-  idx <- which(free)
-  if (length(idx) == 0L) {
- return(rep(NA_real_, H))
+# Allocation along an n-dimensional isodar line
+line_allocator <- function(fit) {
+  mu <- fit$mean; v <- fit$direction; habs <- fit$habitat
+  f <- function(Total) {
+    x <- mu + (Total - sum(mu)) / sum(v) * v
+    if (any(x < 0)) {
+      x <- pmax(x, 0)
+      if (sum(x) > 0) x <- x * Total / sum(x)
+    }
+    stats::setNames(x, habs)
   }
-  Qf <- Q[
- idx,
- idx,
- drop = FALSE
-  ]
-  rf <- rhs[idx]
-  ones <- rep(
- 1,
- length(idx)
-  )
-  M <- rbind(
- cbind(
-Qf,
-ones
- ),
- c(
-ones,
-0
- )
-  )
-
-  bb <- c(
- rf,
- Total
-  )
-  sol <- tryCatch(
- solve(M, bb),
- error = function(e) NULL
-  )
-  if (
- is.null(sol) ||
- any(!is.finite(sol))
-  ) {
- return(rep(NA_real_, H))
-  }
-  x[idx] <- sol[
- seq_along(idx)
-  ]
-  neg <- idx[
- x[idx] < -1e-10
-  ]
-  if (length(neg) == 0L) {
- break
-  }
-  free[neg] <- FALSE
-  x[neg] <- 0
-}
-x[x < 0] <- 0
-sx <- sum(x)
-if (
-  !is.finite(sx) ||
-  sx <= 0
-) {
-  return(rep(NA_real_, H))
-}
-x <- x * Total / sx
-x
- }
-  }
-
-  # N-DIMENSIONAL
-
-  if (dim == "ndim") {
-
- req <- c(
-"habitat",
-"coefficient",
-"intercept"
- )
- missing <- setdiff(
-req,
-names(isodars)
- )
- if (length(missing) > 0L) {
-stop(
-  "Missing required columns for ndim isodars: ",
-  paste(missing, collapse = ", ")
-)
- }
- if (!is.null(weights)) {
-stop(
-  "weights are only applicable to dim = 'pairwise'."
-)
- }
- habitats <- as.character(
-isodars$habitat
- )
- if (
-any(is.na(habitats)) ||
-any(habitats == "")
- ) {
-stop(
-  "All habitat names must be non-empty."
-)
- }
- if (anyDuplicated(habitats)) {
-stop(
-  "Each habitat must occur only once in ndim isodars."
-)
- }
- H <- length(habitats)
- if (H < 2L) {
-stop(
-  "Need at least two habitats."
-)
- }
- coefficients <- as.numeric(
-isodars$coefficient
- )
- intercepts <- as.numeric(
-isodars$intercept
- )
- if (any(!is.finite(coefficients))) {
-stop(
-  "All TLS coefficients must be finite."
-)
- }
- if (any(!is.finite(intercepts))) {
-stop(
-  "The TLS intercept must be finite."
-)
- }
- if (length(unique(intercepts)) != 1L) {
-stop(
-  "All rows of an ndim TLS fit must have the same intercept."
-)
- }
- intercept <- intercepts[1L]
-
-
- # n-dimensional solver
-
- # The TLS hyperplane is:
- #
- # sum(a_i * x_i) + intercept = 0
- # together with:
- # sum(x_i) = Total
- #
- # Among all solutions, the one closest to equal allocation
- # has the form:
- # x_i = Total / k + lambda * (a_i - mean(a))
- #
- # where lambda is determined by the TLS hyperplane.
- # Negative abundances are fixed at zero and the solution is
- # recalculated using the remaining habitats.
-
- solve_total <- function(Total) {
-
-if (
-  !is.finite(Total) ||
-  Total < 0
-) {
-  return(rep(NA_real_, H))
-}
-if (Total == 0) {
-  if (
- abs(intercept) < 1e-10
-  ) {
- return(rep(0, H))
-  }
-  return(rep(NA_real_, H))
-}
-free <- rep(
-  TRUE,
-  H
-)
-x <- rep(
-  0,
-  H
-)
-for (iter in seq_len(H)) {
-  idx <- which(free)
-  if (length(idx) == 0L) {
- return(rep(NA_real_, H))
-  }
-  a <- coefficients[idx]
-  k <- length(idx)
-  mean_a <- mean(a)
-  a_centered <- a - mean_a
-  denominator <- sum(
- a_centered^2
-  )
-
-# All active coefficients are equal
-
-  if (
- denominator < 1e-12
-  ) {
- plane_value <- (
-Total * mean_a +
-  intercept
- )
- tolerance <- 1e-8 * max(
-1,
-Total,
-abs(intercept)
- )
- if (
-abs(plane_value) > tolerance
- ) {
-return(rep(NA_real_, H))
- }
- x[idx] <- Total / k
-  } else {
- lambda <- (
--intercept -
-  Total * mean_a
- ) / denominator
- x[idx] <- (
-Total / k
- ) +
-lambda * a_centered
-  }
-
-  neg <- idx[
- x[idx] < -1e-10
-  ]
-  if (length(neg) == 0L) {
- break
-  }
-  free[neg] <- FALSE
-  x[neg] <- 0
-}
-x[x < 0] <- 0
-
-
-total_error <- abs(
-  sum(x) - Total
-)
-plane_error <- abs(
-  sum(
- coefficients * x
-  ) +
- intercept
-)
-total_tolerance <- 1e-7 * max(
-  1,
-  Total
-)
-plane_tolerance <- 1e-7 * max(
-  1,
-  Total,
-  abs(intercept)
-)
-if (
-  total_error > total_tolerance
-) {
-  return(rep(NA_real_, H))
-}
-if (
-  plane_error > plane_tolerance
-) {
-  return(rep(NA_real_, H))
-}
-x
- }
-  }
-
-# DETERMINE TOTAL ABUNDANCES
-
-if (is.null(abundances)) {
- candidates <- seq_len(
-max_search
- )
- occupied <- vapply(
-candidates,
-function(Total) {
-  x <- solve_total(
- Total
-  )
-  if (
- any(!is.finite(x))
-  ) {
- return(FALSE)
-  }
-  all(
- x > 1e-9
-  )
-},
-logical(1)
- )
- if (any(occupied)) {
-abundances <- min(
-  candidates[occupied]
-)
- } else {
-warning(
-  "No total abundance up to max_search=",
-  max_search,
-  " yields positive abundance in all habitats. ",
-  "Using a default exploratory sequence."
-)
-abundances <- seq(
-  10,
-  1000,
-  length.out = 30
-)
- }
-  } else {
- abundances <- as.numeric(
-abundances
- )
- if (
-any(!is.finite(abundances)) ||
-any(abundances < 0)
- ) {
-stop(
-  "'abundances' must be finite and >= 0."
-)
- }
-  }
-
-  # GINI
-
-  gini_fun <- function(x) {
- x <- as.numeric(x)
- if (
-any(!is.finite(x))
- ) {
-return(NA_real_)
- }
- if (
-all(x == 0)
- ) {
-return(NA_real_)
- }
- x <- sort(x)
- n <- length(x)
- (2 *sum(seq_len(n)*x) / (n*sum(x))) - (n+1) / n
-  }
-
-  # CALCULATE RESULTS
-
-  out <- lapply(
- abundances,
- function(Total) {
-x <- solve_total(
-  Total )
-names(x) <- habitats
-niche_breadth <- switch(
-  method,
-  gini = 1 - gini_fun(x)
-)
-
-if (scaled==TRUE){
-niche_breadth = (niche_breadth-(1/H))*(H/(H-1))
+  attr(f, "habitats") <- habs
+  f
 }
 
-tibble::as_tibble(
-  c(
- list(
-total_abundance = Total,
-niche_breadth = niche_breadth
- ),
- as.list(x)
-  )
-)
- }
-  )
-
-  res <- dplyr::bind_rows(
- out
-  )
-
-# PLOT
-
-  if (isTRUE(plot)) {
- graphics::plot(
-res$total_abundance,
-res$niche_breadth,
-type = "l",
-xlab = "Total abundance",
-ylab = "Isodar-adjusted inequality",
-ylim = c(0, 1),
-lwd = 2,
-col = "red"
- )
+# Pairwise isodar equations y - b x = a as a weighted linear system A x = b
+pairwise_system <- function(isodars, weights = NULL) {
+  habs <- attr(isodars, "habitats")
+  if (is.null(habs)) habs <- unique(c(isodars$habitat_x, isodars$habitat_y))
+  H <- length(habs); K <- nrow(isodars)
+  A <- matrix(0, K, H, dimnames = list(NULL, habs))
+  for (k in seq_len(K)) {
+    A[k, isodars$habitat_y[k]] <- 1
+    A[k, isodars$habitat_x[k]] <- -isodars$slope[k]
   }
-
- # RETURN
-
-  res
+  w <- if (is.null(weights)) rep(1, K) else if (identical(weights, "1/var")) {
+    1 / pmax(isodars$sd^2 * (1 + isodars$slope^2), 1e-12)
+  } else if (is.numeric(weights) && length(weights) == K) weights else
+    stop("'weights' must be NULL, \"1/var\" or one number per isodar.", call. = FALSE)
+  # absent habitats are fixed at 0
+  list(A = A, b = isodars$intercept, w = w, habs = habs,
+       start = which(!habs %in% attr(isodars, "absent")))
 }
 
+# Weighted least-squares solution over the free habitats, summing to Total
+solve_free <- function(sys, Total, free) {
+  Af <- sys$A[, free, drop = FALSE]
+  m <- length(free)
+  Q <- crossprod(Af, Af * sys$w)
+  r <- crossprod(Af, sys$b * sys$w)
+  M <- rbind(cbind(2 * Q, 1), c(rep(1, m), 0))
+  s <- tryCatch(solve(M, c(2 * r, Total)), error = function(e) {
+    tryCatch(qr.solve(M, c(2 * r, Total)), error = function(e2) {
+      stop("The pairwise isodars do not determine the allocation among ",
+           "habitats (singular system). This usually means a habitat with ",
+           "(almost) no records was kept: declare it absent with 'absent', ",
+           "or use dim = \"ndim\".", call. = FALSE)
+    })
+  })
+  out <- s[seq_len(m)]
+  # Lagrange multiplier of the sum constraint: gradient = -lambda on free habitats
+  attr(out, "lambda") <- s[m + 1]
+  out
+}
+
+# Exact constrained least-squares allocation (x >= 0, sum = Total) by a
+# primal active-set method, started from a feasible allocation x
+refine_allocation <- function(sys, Total, x) {
+  H <- length(x)
+  Q <- crossprod(sys$A, sys$A * sys$w)
+  r <- crossprod(sys$A, sys$b * sys$w)
+  candidates <- sys$start
+  free <- candidates[x[candidates] > 0]
+  tol <- 1e-10 * max(1, Total)
+  for (iter in seq_len(10 * H + 10)) {
+    if (length(free) == 0) break
+    xs <- numeric(H)
+    xs[free] <- solve_free(sys, Total, free)
+    if (all(xs[free] >= -tol)) {
+      x <- pmax(xs, 0)
+      lambda <- attr(solve_free(sys, Total, free), "lambda")
+      g <- as.vector(2 * (Q %*% x - r))
+      # a habitat held at 0 should be freed if that lowers the objective
+      out <- setdiff(candidates, free)
+      viol <- g[out] + lambda
+      if (length(out) == 0 || all(viol >= -1e-9 * max(1, abs(lambda)))) break
+      free <- sort(c(free, out[which.min(viol)]))
+    } else {
+      # step towards the free solution until a habitat reaches 0
+      neg <- free[xs[free] < 0]
+      alpha <- min(x[neg] / (x[neg] - xs[neg]))
+      x <- x + alpha * (xs - x)
+      x[abs(x) < tol] <- 0
+      free <- free[x[free] > 0]
+    }
+  }
+  pmax(x, 0)
+}
+
+# Constrained least-squares allocation from pairwise isodars
+pairwise_allocator <- function(isodars, weights = NULL) {
+  sys <- pairwise_system(isodars, weights)
+  habs <- sys$habs
+  H <- length(habs)
+  f <- function(Total) {
+    free <- sys$start
+    x <- numeric(H)
+    clipped <- FALSE
+    for (iter in seq_len(H)) {
+      xf <- solve_free(sys, Total, free)
+      if (all(xf >= 0) || length(free) == 1) { x[free] <- pmax(xf, 0); break }
+      clipped <- TRUE
+      free <- free[xf >= 0]
+      if (length(free) == 0) break
+    }
+    if (sum(x) > 0) x <- x * Total / sum(x)
+    # dropping habitats can overshoot: move to the exact optimum
+    if (clipped && Total > 0 && sum(x) > 0) x <- refine_allocation(sys, Total, x)
+    stats::setNames(x, habs)
+  }
+  attr(f, "habitats") <- habs
+  f
+}

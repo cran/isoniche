@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+
+<title>Preparing your data</title>
+
+<script src="data:application/javascript;base64,Ly8gUGFuZG9jIDIuOSBhZGRzIGF0dHJpYnV0ZXMgb24gYm90aCBoZWFkZXIgYW5kIGRpdi4gV2UgcmVtb3ZlIHRoZSBmb3JtZXIgKHRvCi8vIGJlIGNvbXBhdGlibGUgd2l0aCB0aGUgYmVoYXZpb3Igb2YgUGFuZG9jIDwgMi44KS4KZG9jdW1lbnQuYWRkRXZlbnRMaXN0ZW5lcignRE9NQ29udGVudExvYWRlZCcsIGZ1bmN0aW9uKGUpIHsKICB2YXIgaHMgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yQWxsKCJkaXYuc2VjdGlvbltjbGFzcyo9J2xldmVsJ10gPiA6Zmlyc3QtY2hpbGQiKTsKICB2YXIgaSwgaCwgYTsKICBmb3IgKGkgPSAwOyBpIDwgaHMubGVuZ3RoOyBpKyspIHsKICAgIGggPSBoc1tpXTsKICAgIGlmICghL15oWzEtNl0kL2kudGVzdChoLnRhZ05hbWUpKSBjb250aW51ZTsgIC8vIGl0IHNob3VsZCBiZSBhIGhlYWRlciBoMS1oNgogICAgYSA9IGguYXR0cmlidXRlczsKICAgIHdoaWxlIChhLmxlbmd0aCA+IDApIGgucmVtb3ZlQXR0cmlidXRlKGFbMF0ubmFtZSk7CiAgfQp9KTsK"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+
+
+<style type="text/css">
+  code {
+    white-space: pre;
+  }
+  .sourceCode {
+    overflow: visible;
+  }
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<link rel="stylesheet" href="data:text/css,body%20%7B%0Abackground%2Dcolor%3A%20%23fff%3B%0Amargin%3A%201em%20auto%3B%0Amax%2Dwidth%3A%20700px%3B%0Aoverflow%3A%20visible%3B%0Apadding%2Dleft%3A%202em%3B%0Apadding%2Dright%3A%202em%3B%0Afont%2Dfamily%3A%20%22Open%20Sans%22%2C%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0Afont%2Dsize%3A%2014px%3B%0Aline%2Dheight%3A%201%2E35%3B%0A%7D%0A%23TOC%20%7B%0Aclear%3A%20both%3B%0Amargin%3A%200%200%2010px%2010px%3B%0Apadding%3A%204px%3B%0Awidth%3A%20400px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Aborder%2Dradius%3A%205px%3B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Afont%2Dsize%3A%2013px%3B%0Aline%2Dheight%3A%201%2E3%3B%0A%7D%0A%23TOC%20%2Etoctitle%20%7B%0Afont%2Dweight%3A%20bold%3B%0Afont%2Dsize%3A%2015px%3B%0Amargin%2Dleft%3A%205px%3B%0A%7D%0A%23TOC%20ul%20%7B%0Apadding%2Dleft%3A%2040px%3B%0Amargin%2Dleft%3A%20%2D1%2E5em%3B%0Amargin%2Dtop%3A%205px%3B%0Amargin%2Dbottom%3A%205px%3B%0A%7D%0A%23TOC%20ul%20ul%20%7B%0Amargin%2Dleft%3A%20%2D2em%3B%0A%7D%0A%23TOC%20li%20%7B%0Aline%2Dheight%3A%2016px%3B%0A%7D%0Atable%20%7B%0Amargin%3A%201em%20auto%3B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dcolor%3A%20%23DDDDDD%3B%0Aborder%2Dstyle%3A%20outset%3B%0Aborder%2Dcollapse%3A%20collapse%3B%0A%7D%0Atable%20th%20%7B%0Aborder%2Dwidth%3A%202px%3B%0Apadding%3A%205px%3B%0Aborder%2Dstyle%3A%20inset%3B%0A%7D%0Atable%20td%20%7B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dstyle%3A%20inset%3B%0Aline%2Dheight%3A%2018px%3B%0Apadding%3A%205px%205px%3B%0A%7D%0Atable%2C%20table%20th%2C%20table%20td%20%7B%0Aborder%2Dleft%2Dstyle%3A%20none%3B%0Aborder%2Dright%2Dstyle%3A%20none%3B%0A%7D%0Atable%20thead%2C%20table%20tr%2Eeven%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Ap%20%7B%0Amargin%3A%200%2E5em%200%3B%0A%7D%0Ablockquote%20%7B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Apadding%3A%200%2E25em%200%2E75em%3B%0A%7D%0Ahr%20%7B%0Aborder%2Dstyle%3A%20solid%3B%0Aborder%3A%20none%3B%0Aborder%2Dtop%3A%201px%20solid%20%23777%3B%0Amargin%3A%2028px%200%3B%0A%7D%0Adl%20%7B%0Amargin%2Dleft%3A%200%3B%0A%7D%0Adl%20dd%20%7B%0Amargin%2Dbottom%3A%2013px%3B%0Amargin%2Dleft%3A%2013px%3B%0A%7D%0Adl%20dt%20%7B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0Aul%20%7B%0Amargin%2Dtop%3A%200%3B%0A%7D%0Aul%20li%20%7B%0Alist%2Dstyle%3A%20circle%20outside%3B%0A%7D%0Aul%20ul%20%7B%0Amargin%2Dbottom%3A%200%3B%0A%7D%0Apre%2C%20code%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0Aborder%2Dradius%3A%203px%3B%0Acolor%3A%20%23333%3B%0Awhite%2Dspace%3A%20pre%2Dwrap%3B%20%0A%7D%0Apre%20%7B%0Aborder%2Dradius%3A%203px%3B%0Amargin%3A%205px%200px%2010px%200px%3B%0Apadding%3A%2010px%3B%0A%7D%0Apre%3Anot%28%5Bclass%5D%29%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Acode%20%7B%0Afont%2Dfamily%3A%20Consolas%2C%20Monaco%2C%20%27Courier%20New%27%2C%20monospace%3B%0Afont%2Dsize%3A%2085%25%3B%0A%7D%0Ap%20%3E%20code%2C%20li%20%3E%20code%20%7B%0Apadding%3A%202px%200px%3B%0A%7D%0Adiv%2Efigure%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0Aimg%20%7B%0Abackground%2Dcolor%3A%20%23FFFFFF%3B%0Apadding%3A%202px%3B%0Aborder%3A%201px%20solid%20%23DDDDDD%3B%0Aborder%2Dradius%3A%203px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Amargin%3A%200%205px%3B%0A%7D%0Ah1%20%7B%0Amargin%2Dtop%3A%200%3B%0Afont%2Dsize%3A%2035px%3B%0Aline%2Dheight%3A%2040px%3B%0A%7D%0Ah2%20%7B%0Aborder%2Dbottom%3A%204px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Apadding%2Dbottom%3A%202px%3B%0Afont%2Dsize%3A%20145%25%3B%0A%7D%0Ah3%20%7B%0Aborder%2Dbottom%3A%202px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Afont%2Dsize%3A%20120%25%3B%0A%7D%0Ah4%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23f7f7f7%3B%0Amargin%2Dleft%3A%208px%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Ah5%2C%20h6%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23ccc%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Aa%20%7B%0Acolor%3A%20%230033dd%3B%0Atext%2Ddecoration%3A%20none%3B%0A%7D%0Aa%3Ahover%20%7B%0Acolor%3A%20%236666ff%3B%20%7D%0Aa%3Avisited%20%7B%0Acolor%3A%20%23800080%3B%20%7D%0Aa%3Avisited%3Ahover%20%7B%0Acolor%3A%20%23BB00BB%3B%20%7D%0Aa%5Bhref%5E%3D%22http%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0Aa%5Bhref%5E%3D%22https%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0A%0Acode%20%3E%20span%2Ekw%20%7B%20color%3A%20%23555%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Edt%20%7B%20color%3A%20%23902000%3B%20%7D%20%0Acode%20%3E%20span%2Edv%20%7B%20color%3A%20%2340a070%3B%20%7D%20%0Acode%20%3E%20span%2Ebn%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Efl%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Ech%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Est%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Eco%20%7B%20color%3A%20%23888888%3B%20font%2Dstyle%3A%20italic%3B%20%7D%20%0Acode%20%3E%20span%2Eot%20%7B%20color%3A%20%23007020%3B%20%7D%20%0Acode%20%3E%20span%2Eal%20%7B%20color%3A%20%23ff0000%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Efu%20%7B%20color%3A%20%23900%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Eer%20%7B%20color%3A%20%23a61717%3B%20background%2Dcolor%3A%20%23e3d2d2%3B%20%7D%20%0A" type="text/css" />
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Preparing your data</h1>
+
+
+
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(isoniche)</span></code></pre></div>
+<p>This vignette covers the decisions to make before estimating niche breadth: the data format, sampling effort, what counts as a replicate, which habitats to include, and what to do with incomplete or small sites.</p>
+<div id="long-format" class="section level2">
+<h2>Long format</h2>
+<p>All the main functions (<code>check_coverage()</code>, <code>fit_isodars()</code>, <code>niche_breadth()</code>, <code>group_sites()</code>) take data in long format, with one row per species x site x habitat and columns named by arguments:</p>
+<table>
+<thead>
+<tr class="header">
+<th>argument</th>
+<th>column</th>
+<th>required</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>species</code></td>
+<td>species name</td>
+<td>no (without it the data are one species)</td>
+</tr>
+<tr class="even">
+<td><code>site</code></td>
+<td>replicate (site, or survey)</td>
+<td>yes</td>
+</tr>
+<tr class="odd">
+<td><code>habitat</code></td>
+<td>habitat</td>
+<td>yes</td>
+</tr>
+<tr class="even">
+<td><code>abundance</code></td>
+<td>number of individuals</td>
+<td>yes</td>
+</tr>
+<tr class="odd">
+<td><code>effort</code></td>
+<td>sampling effort</td>
+<td>no (default: 1 for every row)</td>
+</tr>
+</tbody>
+</table>
+<p>Rules:</p>
+<ul>
+<li>A habitat not sampled at a site has no row. A habitat sampled where the species was not found has a row with abundance 0. If any species has a row for a site and habitat, that site and habitat count as sampled, and missing rows of other species there are treated as 0.</li>
+<li>There is at most one row per species, site and habitat; pool repeated samples first (see below).</li>
+<li>Sites where a species has no individuals at all are dropped for that species: they carry no information on how it distributes among habitats.</li>
+<li>If <code>habitat</code> is a factor, its levels set the order of habitats.</li>
+</ul>
+</div>
+<div id="from-a-community-matrix" class="section level2">
+<h2>From a community matrix</h2>
+<p>Community data are often stored as a matrix of samples x species, with a separate table of sample attributes. <code>community_to_long()</code> converts them, pooling samples from the same site and habitat and summing their effort:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>comm <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">12</span>, <span class="dv">0</span>, <span class="dv">3</span>,</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>                  <span class="dv">8</span>, <span class="dv">2</span>, <span class="dv">0</span>,</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>                  <span class="dv">5</span>, <span class="dv">1</span>, <span class="dv">1</span>,</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>                  <span class="dv">0</span>, <span class="dv">5</span>, <span class="dv">9</span>,</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>                  <span class="dv">2</span>, <span class="dv">7</span>, <span class="dv">4</span>),</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>               <span class="at">nrow =</span> <span class="dv">5</span>, <span class="at">byrow =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>               <span class="at">dimnames =</span> <span class="fu">list</span>(<span class="cn">NULL</span>, <span class="fu">c</span>(<span class="st">&quot;sp_a&quot;</span>, <span class="st">&quot;sp_b&quot;</span>, <span class="st">&quot;sp_c&quot;</span>)))</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>samples <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">site =</span> <span class="fu">c</span>(<span class="st">&quot;north&quot;</span>, <span class="st">&quot;north&quot;</span>, <span class="st">&quot;north&quot;</span>, <span class="st">&quot;south&quot;</span>, <span class="st">&quot;south&quot;</span>),</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>                      <span class="at">habitat =</span> <span class="fu">c</span>(<span class="st">&quot;reef&quot;</span>, <span class="st">&quot;reef&quot;</span>, <span class="st">&quot;lagoon&quot;</span>, <span class="st">&quot;reef&quot;</span>, <span class="st">&quot;lagoon&quot;</span>),</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>                      <span class="at">area_m2 =</span> <span class="fu">c</span>(<span class="dv">100</span>, <span class="dv">50</span>, <span class="dv">100</span>, <span class="dv">100</span>, <span class="dv">100</span>),</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>                      <span class="at">lon =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="fl">149.80</span>, <span class="sc">-</span><span class="fl">149.80</span>, <span class="sc">-</span><span class="fl">149.80</span>, <span class="sc">-</span><span class="fl">149.85</span>, <span class="sc">-</span><span class="fl">149.85</span>),</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>                      <span class="at">lat =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="fl">17.48</span>, <span class="sc">-</span><span class="fl">17.48</span>, <span class="sc">-</span><span class="fl">17.48</span>, <span class="sc">-</span><span class="fl">17.55</span>, <span class="sc">-</span><span class="fl">17.55</span>))</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>long <span class="ot">&lt;-</span> <span class="fu">community_to_long</span>(comm, samples, <span class="at">site =</span> <span class="st">&quot;site&quot;</span>, <span class="at">habitat =</span> <span class="st">&quot;habitat&quot;</span>,</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>                          <span class="at">effort =</span> <span class="st">&quot;area_m2&quot;</span>, <span class="at">keep =</span> <span class="fu">c</span>(<span class="st">&quot;lon&quot;</span>, <span class="st">&quot;lat&quot;</span>))</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>long</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 12 x 7</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    species site  habitat abundance area_m2   lon   lat</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    &lt;chr&gt;   &lt;chr&gt; &lt;chr&gt;       &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  1 sp_a    north lagoon          5     100 -150. -17.5</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  2 sp_a    north reef           20     150 -150. -17.5</span></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  3 sp_a    south lagoon          2     100 -150. -17.6</span></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  4 sp_a    south reef            0     100 -150. -17.6</span></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  5 sp_b    north lagoon          1     100 -150. -17.5</span></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  6 sp_b    north reef            2     150 -150. -17.5</span></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  7 sp_b    south lagoon          7     100 -150. -17.6</span></span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  8 sp_b    south reef            5     100 -150. -17.6</span></span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  9 sp_c    north lagoon          1     100 -150. -17.5</span></span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10 sp_c    north reef            3     150 -150. -17.5</span></span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 11 sp_c    south lagoon          4     100 -150. -17.6</span></span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 12 sp_c    south reef            9     100 -150. -17.6</span></span></code></pre></div>
+<p>The result goes straight into the other functions, e.g. <code>niche_breadth(long, species = &quot;species&quot;, site = &quot;site&quot;, habitat = &quot;habitat&quot;, abundance = &quot;abundance&quot;, effort = &quot;area_m2&quot;)</code>. Without an <code>effort</code> column, each sample has effort 1, so pooled cells have effort equal to their number of samples.</p>
+</div>
+<div id="effort-and-the-unit-of-abundance" class="section level2">
+<h2>Effort and the unit of abundance</h2>
+<p>Isodars relate <em>densities</em>, so counts are divided by effort: density = abundance / effort. Effort can be area, transect length (with constant width), trap nights or any relative measure, as long as it is the same kind of measure in every row.</p>
+<p>Densities are then expressed per <code>reference_effort</code>, by default the median effort of the data. This is the sampling unit in which “one individual” and all reported abundances (spillover abundance, the x-axis of niche breadth curves) are measured. DI niche breadth is evaluated where the least favoured habitat holds one individual per reference effort, so <strong>DI niche breadth and spillover abundance depend on this unit, while isodar slopes and DD niche breadth do not</strong>. Use the same <code>reference_effort</code> for all species you compare, and report it.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>fish <span class="ot">&lt;-</span> moorea_fish[moorea_fish<span class="sc">$</span>species <span class="sc">==</span> <span class="st">&quot;Chaetodon ornatissimus&quot;</span>, ]</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>fish<span class="sc">$</span>effort <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>unit1 <span class="ot">&lt;-</span> <span class="fu">niche_breadth</span>(fish, <span class="at">site =</span> <span class="st">&quot;site&quot;</span>, <span class="at">habitat =</span> <span class="st">&quot;habitat&quot;</span>,</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>                       <span class="at">abundance =</span> <span class="st">&quot;abundance&quot;</span>, <span class="at">effort =</span> <span class="st">&quot;effort&quot;</span>,</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>                       <span class="at">n_boot =</span> <span class="dv">0</span>, <span class="at">diagnostics =</span> <span class="fu">list</span>(<span class="at">n_null =</span> <span class="dv">0</span>))</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>unit2 <span class="ot">&lt;-</span> <span class="fu">niche_breadth</span>(fish, <span class="at">site =</span> <span class="st">&quot;site&quot;</span>, <span class="at">habitat =</span> <span class="st">&quot;habitat&quot;</span>,</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>                       <span class="at">abundance =</span> <span class="st">&quot;abundance&quot;</span>, <span class="at">effort =</span> <span class="st">&quot;effort&quot;</span>,</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>                       <span class="at">reference_effort =</span> <span class="dv">2</span>, <span class="at">n_boot =</span> <span class="dv">0</span>,</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>                       <span class="at">diagnostics =</span> <span class="fu">list</span>(<span class="at">n_null =</span> <span class="dv">0</span>))</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="fu">data.frame</span>(<span class="at">reference_effort =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>),</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>           <span class="fu">rbind</span>(unit1[<span class="fu">c</span>(<span class="st">&quot;nb_di&quot;</span>, <span class="st">&quot;spillover_abundance&quot;</span>, <span class="st">&quot;nb_dd&quot;</span>)],</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>                 unit2[<span class="fu">c</span>(<span class="st">&quot;nb_di&quot;</span>, <span class="st">&quot;spillover_abundance&quot;</span>, <span class="st">&quot;nb_dd&quot;</span>)]))</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   reference_effort     nb_di spillover_abundance     nb_dd</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1                1 0.3347681                  27 0.6369444</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2                2 0.2742806                  51 0.6369444</span></span></code></pre></div>
+<p>With <code>reference_effort = 2</code>, abundances are counted per two sampling units, so “one individual” in the least-favoured habitat is a different point along the isodars: the spillover abundance and DI niche breadth change (here the spillover abundance almost doubles, but the direction and size of the change depend on the isodars), while DD niche breadth is unchanged.</p>
+<p>The default <code>reference_effort</code>, the median effort of the pooled site x habitat cells, depends on how many samples happened to be pooled. Set it to a natural unit instead, for example the area of one standard transect, and use the same value for every species you compare. The unit is printed with the results of <code>niche_breadth()</code>.</p>
+</div>
+<div id="replicates-sites-or-surveys" class="section level2">
+<h2>Replicates: sites or surveys</h2>
+<p>Isodars are estimated across replicates that differ in abundance. A replicate can be a site, or one survey (a year, a season) of a site; put its identifier in the <code>site</code> column. With several sites surveyed repeatedly, each site x survey can be a replicate (combine the two into one identifier), but repeated surveys of a site are not independent, and the bootstrap, which resamples replicates, will then give intervals that are too narrow. Pooling surveys within a site, or analysing years at a single site, avoids this.</p>
+</div>
+<div id="which-habitats" class="section level2">
+<h2>Which habitats</h2>
+<p>Include the habitats <em>available</em> to the species: those it could reach. A habitat the species never uses lowers its niche breadth, so species compared with each other should be assessed over the same set of habitats. Rare or poorly sampled habitats can be merged with similar ones before the analysis.</p>
+</div>
+<div id="absent-and-undersampled-habitats" class="section level2">
+<h2>Absent and undersampled habitats</h2>
+<p>A habitat in which a species was never recorded is treated in one of two ways:</p>
+<ul>
+<li><strong>absent</strong>, when the habitat was sampled at enough sites where the species occurred (<code>absent_min_sites</code>, default 5) and the species was found there no more than <code>absent_max_count</code> times (default 0). It is fixed at 0, excluded from the isodar fit and counted as 0 in niche breadth.</li>
+<li><strong>undersampled</strong>, when it was sampled at too few such sites. The zeros may then be chance, so the habitat is kept and the species is flagged.</li>
+</ul>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>cov <span class="ot">&lt;-</span> <span class="fu">check_coverage</span>(moorea_fish, <span class="at">species =</span> <span class="st">&quot;species&quot;</span>, <span class="at">site =</span> <span class="st">&quot;site&quot;</span>,</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>                      <span class="at">habitat =</span> <span class="st">&quot;habitat&quot;</span>, <span class="at">abundance =</span> <span class="st">&quot;abundance&quot;</span>)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>cov[cov<span class="sc">$</span>species <span class="sc">==</span> <span class="st">&quot;Chromis viridis&quot;</span>, ]</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 3 x 8</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   species     habitat n_sites n_complete n_sampled n_occupied total_count status</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   &lt;chr&gt;       &lt;chr&gt;     &lt;int&gt;      &lt;int&gt;     &lt;dbl&gt;      &lt;dbl&gt;       &lt;dbl&gt; &lt;chr&gt; </span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 Chromis vi~ barrie~      13         13        13         13        4617 used  </span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2 Chromis vi~ fringi~      13         13        13         11        2376 used  </span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3 Chromis vi~ outer_~      13         13        13          0           0 absent</span></span></code></pre></div>
+<p>The rule can be changed (<code>absent_max_count</code>, <code>absent_min_sites</code>), switched off (<code>absent = &quot;none&quot;</code>) or replaced by naming the absent habitats (<code>absent = &quot;outer_slope&quot;</code>), in <code>niche_breadth()</code> and <code>fit_isodars()</code>.</p>
+<p>With the default <code>absent_max_count = 0</code>, a single individual recorded in a habitat makes it used. That one record can move the spillover abundance a long way (the species must now reach one individual in that habitat), so if a few stray individuals should not count, raise <code>absent_max_count</code>.</p>
+<p>A habitat used at low abundance but predicted to be empty at high abundance is <em>not</em> absent: it counts for DI niche breadth and is listed in the <code>abandoned</code> column of <code>niche_breadth()</code>.</p>
+</div>
+<div id="incomplete-sites" class="section level2">
+<h2>Incomplete sites</h2>
+<p>Not every habitat needs to be sampled at every site. Pairwise isodars (the default, <code>dim = &quot;pairwise&quot;</code>) use every site where both habitats of a pair were sampled. The n-dimensional isodar (<code>dim = &quot;ndim&quot;</code>) can use sites with at least two habitats through a one-factor model (<code>ndim_method = &quot;latent&quot;</code>, needs the <strong>glmmTMB</strong> package); with <code>ndim_method = &quot;auto&quot;</code> it is chosen whenever some sites are incomplete. Neither is preferred in general; when many sites are incomplete, fitting both and comparing them is a useful check. <code>n_sites</code> in the results counts the sites where the species was recorded; the latent fit uses those with at least two sampled habitats.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>inc <span class="ot">&lt;-</span> <span class="fu">simulate_isodars</span>(<span class="at">slopes =</span> <span class="fu">c</span>(<span class="fl">1.5</span>, <span class="dv">1</span>, <span class="fl">0.8</span>), <span class="at">intercepts =</span> <span class="fu">c</span>(<span class="dv">5</span>, <span class="dv">0</span>, <span class="dv">2</span>),</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>                        <span class="at">n =</span> <span class="dv">60</span>, <span class="at">p_missing =</span> <span class="fl">0.3</span>, <span class="at">format =</span> <span class="st">&quot;long&quot;</span>)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(inc)</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 6 x 3</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   site  habitat abundance</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   &lt;chr&gt; &lt;chr&gt;       &lt;dbl&gt;</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 site1 hab1           15</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2 site1 hab2           29</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3 site1 hab3           28</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4 site1 hab4           25</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5 site2 hab1           21</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6 site2 hab3           38</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="fu">niche_breadth</span>(inc, <span class="at">site =</span> <span class="st">&quot;site&quot;</span>, <span class="at">habitat =</span> <span class="st">&quot;habitat&quot;</span>,</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>              <span class="at">abundance =</span> <span class="st">&quot;abundance&quot;</span>, <span class="at">dim =</span> <span class="st">&quot;ndim&quot;</span>, <span class="at">n_boot =</span> <span class="dv">0</span>,</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>              <span class="at">diagnostics =</span> <span class="fu">list</span>(<span class="at">n_null =</span> <span class="dv">0</span>))[<span class="fu">c</span>(<span class="st">&quot;method&quot;</span>, <span class="st">&quot;n_sites&quot;</span>, <span class="st">&quot;nb_di&quot;</span>,</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>                                                <span class="st">&quot;nb_dd&quot;</span>, <span class="st">&quot;flags&quot;</span>)]</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 1 x 5</span></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   method        n_sites nb_di nb_dd flags                     </span></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   &lt;chr&gt;           &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;                     </span></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 line (latent)      60 0.721 0.887 di_extrapolation, reversal</span></span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Abundances are per site (equal effort in every site and habitat).</span></span></code></pre></div>
+</div>
+<div id="grouping-nearby-sites" class="section level2">
+<h2>Grouping nearby sites</h2>
+<p>When single sites lack habitats or hold few individuals, nearby sites can be merged into larger sampling units with <code>group_sites()</code>. It uses complete linkage on great-circle distance, so every pair of sites in a group lies within the radius; counts and efforts are summed.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">2</span>)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>d <span class="ot">&lt;-</span> <span class="fu">simulate_isodars</span>(<span class="fl">1.5</span>, <span class="fl">1.5</span>, <span class="dv">5</span>, <span class="dv">5</span>, <span class="at">n =</span> <span class="dv">30</span>, <span class="at">p_missing =</span> <span class="fl">0.3</span>,</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>                      <span class="at">format =</span> <span class="st">&quot;long&quot;</span>)</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>xy <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">site =</span> <span class="fu">unique</span>(d<span class="sc">$</span>site), <span class="at">lon =</span> stats<span class="sc">::</span><span class="fu">runif</span>(<span class="dv">30</span>, <span class="dv">0</span>, <span class="fl">0.1</span>),</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>                 <span class="at">lat =</span> stats<span class="sc">::</span><span class="fu">runif</span>(<span class="dv">30</span>, <span class="dv">0</span>, <span class="fl">0.1</span>))</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>d <span class="ot">&lt;-</span> <span class="fu">merge</span>(d, xy)</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>g <span class="ot">&lt;-</span> <span class="fu">group_sites</span>(d, <span class="at">site =</span> <span class="st">&quot;site&quot;</span>, <span class="at">lon =</span> <span class="st">&quot;lon&quot;</span>, <span class="at">lat =</span> <span class="st">&quot;lat&quot;</span>, <span class="at">radius_km =</span> <span class="dv">2</span>,</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>                 <span class="at">habitat =</span> <span class="st">&quot;habitat&quot;</span>, <span class="at">abundance =</span> <span class="st">&quot;abundance&quot;</span>)</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(g)</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 6 x 7</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   site          habitat abundance effort     lon    lat n_sites</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   &lt;chr&gt;         &lt;chr&gt;       &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;  &lt;dbl&gt;   &lt;int&gt;</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 site1+site26  hab1           28      1 0.0247  0.0673       2</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2 site1+site26  hab2           64      2 0.0247  0.0673       2</span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3 site1+site26  hab3           35      1 0.0247  0.0673       2</span></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4 site10+site15 hab1           31      1 0.00364 0.0263       2</span></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5 site10+site15 hab2           92      2 0.00364 0.0263       2</span></span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6 site10+site15 hab3           66      1 0.00364 0.0263       2</span></span></code></pre></div>
+<p>The radius is not chosen automatically: choosing it to improve the results would be circular. Instead, <code>radius_sensitivity()</code> shows how the number of units, their completeness and the estimates change with the radius; choose a radius on ecological grounds (e.g. the scale of movement of the species) and check that the conclusions do not hinge on it:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">radius_sensitivity</span>(d, <span class="at">site =</span> <span class="st">&quot;site&quot;</span>, <span class="at">lon =</span> <span class="st">&quot;lon&quot;</span>, <span class="at">lat =</span> <span class="st">&quot;lat&quot;</span>,</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>                   <span class="at">habitat =</span> <span class="st">&quot;habitat&quot;</span>, <span class="at">abundance =</span> <span class="st">&quot;abundance&quot;</span>,</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>                   <span class="at">radii_km =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">2</span>, <span class="dv">5</span>), <span class="at">diagnostics =</span> <span class="fu">list</span>(<span class="at">n_null =</span> <span class="dv">0</span>))</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 3 x 7</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   radius_km n_units complete_share nb_di spillover_abundance nb_dd flags        </span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;       &lt;dbl&gt;   &lt;int&gt;          &lt;dbl&gt; &lt;dbl&gt;               &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;        </span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1         0      30          0.233 0.391                  23 0.734 di_extrapola~</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2         2      16          0.688 0.384                  36 0.489 reversal, po~</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3         5       7          1     0.297                  46 0.695 few_sites, d~</span></span></code></pre></div>
+<p><code>radius_km</code> can also be a named vector with one radius per species.</p>
+</div>
+<div id="one-species-in-wide-format" class="section level2">
+<h2>One species in wide format</h2>
+<p>For a single species, data can also be given in wide format, one row per site and one column per habitat (<code>NA</code> for habitats not sampled), with the habitat columns named in <code>hab_cols</code>:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>sim <span class="ot">&lt;-</span> <span class="fu">simulate_isodars</span>(<span class="fl">1.5</span>, <span class="fl">1.5</span>, <span class="dv">5</span>, <span class="dv">5</span>, <span class="at">noise =</span> <span class="dv">1</span>, <span class="at">n =</span> <span class="dv">30</span>)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(sim)</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 6 x 4</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    hab1  hab2  hab3 total_abundance</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;           &lt;dbl&gt;</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1    15    27    45              87</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2    21    37    60             118</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3    32    54    87             173</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4    51    83   129             263</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5    11    23    40              74</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6    51    82   128             261</span></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a><span class="fu">niche_breadth</span>(sim, <span class="at">hab_cols =</span> <span class="fu">c</span>(<span class="st">&quot;hab1&quot;</span>, <span class="st">&quot;hab2&quot;</span>, <span class="st">&quot;hab3&quot;</span>), <span class="at">n_boot =</span> <span class="dv">0</span>,</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>              <span class="at">diagnostics =</span> <span class="fu">list</span>(<span class="at">n_null =</span> <span class="dv">0</span>))[<span class="fu">c</span>(<span class="st">&quot;nb_di&quot;</span>, <span class="st">&quot;nb_dd&quot;</span>)]</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 1 x 2</span></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   nb_di nb_dd</span></span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   &lt;dbl&gt; &lt;dbl&gt;</span></span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 0.381 0.738</span></span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Abundances are per site (equal effort in every site and habitat).</span></span></code></pre></div>
+<p>The lower-level functions <code>iai()</code> and <code>isoderr()</code> work on fitted isodars of one species in this format; see their help pages.</p>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

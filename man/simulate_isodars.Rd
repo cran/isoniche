@@ -2,60 +2,64 @@
 % Please edit documentation in R/simulate_isodars.R
 \name{simulate_isodars}
 \alias{simulate_isodars}
-\title{Simulate abundances across three habitats}
+\title{Simulate abundances in habitats linked by isodars}
 \usage{
 simulate_isodars(
-  slope1,
-  slope2,
-  int1,
-  int2,
+  slope1 = 1,
+  slope2 = 1,
+  int1 = 0,
+  int2 = 0,
   noise = 1,
   n = 30,
-  hab1_max = 100/(slope1^1.2) - int1
+  hab1_max = 100/(slopes[1]^1.2) - intercepts[1],
+  slopes = c(slope1, slope2),
+  intercepts = c(int1, int2),
+  p_missing = 0,
+  min_habitats = 2,
+  format = c("wide", "long")
 )
 }
 \arguments{
-\item{slope1}{Numeric. Isodar slope for \code{hab2 ~ hab1}.}
+\item{slope1, int1}{Isodar of habitat 2 on habitat 1.}
 
-\item{slope2}{Numeric. Isodar slope for \code{hab3 ~ hab2}.}
+\item{slope2, int2}{Isodar of habitat 3 on habitat 2.}
 
-\item{int1}{Numeric. Isodar intercept for \code{hab2 ~ hab1}.}
+\item{noise}{Standard deviation of the Gaussian noise.}
 
-\item{int2}{Numeric. Isodar intercept for \code{hab3 ~ hab2}.}
+\item{n}{Number of sites.}
 
-\item{noise}{Numeric (>= 0). Standard deviation of Gaussian noise.}
+\item{hab1_max}{Upper bound of abundance in habitat 1. The default,
+\code{100 / slopes[1]^1.2 - intercepts[1]}, keeps total abundances in a
+comparable range across parameter values.}
 
-\item{n}{Integer (> 0). Number of simulated sites.}
+\item{slopes, intercepts}{Any number of habitats: vectors of length
+\eqn{H - 1} giving the isodar of each habitat on the previous one
+(default: \code{c(slope1, slope2)} and \code{c(int1, int2)}).}
 
-\item{hab1_max}{Integer. maximum abundance value in habitat 1 (other maxima calculated from hab1_max).
-Default is derived to generally suit the isodar parameters, but is arbitrary.}
+\item{p_missing}{Probability that a habitat is missing (not sampled) at a
+site; at least \code{min_habitats} habitats are kept at every site.}
+
+\item{min_habitats}{Minimum number of habitats recorded per site.}
+
+\item{format}{\code{"wide"} (one column per habitat, \code{NA} where missing) or
+\code{"long"} (columns \code{site}, \code{habitat}, \code{abundance}; missing habitats have
+no row).}
 }
 \value{
-A tibble with one row per simulated site containing:
-\itemize{
-\item hab1, hab2, hab3: simulated abundances (nonnegative integers)
-\item total_abundance: hab1 + hab2 + hab3
-\item mean_abundance: total_abundance divided  by 3
-\item sd: scaled standard deviation of habitat abundances
-\item cv: coefficient of variation (NA if mean_abundance == 0)
-\item gini: Gini coefficient of habitat abundances
-}
+Wide: a tibble with columns \code{hab1}, ..., \code{habH} and
+\code{total_abundance}. Long: a tibble with \code{site}, \code{habitat} and \code{abundance}.
 }
 \description{
-Simulates abundance data for three habitats across \code{n} sites using
-sequential linear relationships (isodars) with Gaussian noise:
-\itemize{
-\item hab2 is generated from hab1 using \code{slope1} and \code{int1}
-\item hab3 is generated from hab2 using \code{slope2} and \code{int2}
-}
-}
-\details{
-The output includes simple per-site niche metrics (CV and Gini) computed
-from the three habitat abundances.
+Simulates abundances at \code{n} sites along a chain of isodars: habitat 1 is
+drawn uniformly between 0 and \code{hab1_max}, and each following habitat
+\eqn{k + 1} = \code{intercepts[k]} + \code{slopes[k]} x habitat \eqn{k} + noise.
+Values are rounded to integers and negative values set to 0. The default
+is three habitats, set by \code{slope1}, \code{slope2}, \code{int1} and \code{int2}; the
+sequence of random numbers is the same as in version 1.0.0.
 }
 \examples{
 set.seed(1)
 simulate_isodars(1, 1.1, 1, 0, noise = 2, n = 10)
-simulate_isodars(1.5, 2, 5, 2, noise = 2, n = 10)
-
+simulate_isodars(slopes = c(1.5, 1, 0.8), intercepts = c(5, 0, 2), n = 5,
+                 p_missing = 0.3)
 }

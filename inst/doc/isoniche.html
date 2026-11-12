@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+
+<title>Get started with isoniche</title>
+
+<script src="data:application/javascript;base64,Ly8gUGFuZG9jIDIuOSBhZGRzIGF0dHJpYnV0ZXMgb24gYm90aCBoZWFkZXIgYW5kIGRpdi4gV2UgcmVtb3ZlIHRoZSBmb3JtZXIgKHRvCi8vIGJlIGNvbXBhdGlibGUgd2l0aCB0aGUgYmVoYXZpb3Igb2YgUGFuZG9jIDwgMi44KS4KZG9jdW1lbnQuYWRkRXZlbnRMaXN0ZW5lcignRE9NQ29udGVudExvYWRlZCcsIGZ1bmN0aW9uKGUpIHsKICB2YXIgaHMgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yQWxsKCJkaXYuc2VjdGlvbltjbGFzcyo9J2xldmVsJ10gPiA6Zmlyc3QtY2hpbGQiKTsKICB2YXIgaSwgaCwgYTsKICBmb3IgKGkgPSAwOyBpIDwgaHMubGVuZ3RoOyBpKyspIHsKICAgIGggPSBoc1tpXTsKICAgIGlmICghL15oWzEtNl0kL2kudGVzdChoLnRhZ05hbWUpKSBjb250aW51ZTsgIC8vIGl0IHNob3VsZCBiZSBhIGhlYWRlciBoMS1oNgogICAgYSA9IGguYXR0cmlidXRlczsKICAgIHdoaWxlIChhLmxlbmd0aCA+IDApIGgucmVtb3ZlQXR0cmlidXRlKGFbMF0ubmFtZSk7CiAgfQp9KTsK"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+
+
+<style type="text/css">
+  code {
+    white-space: pre;
+  }
+  .sourceCode {
+    overflow: visible;
+  }
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<link rel="stylesheet" href="data:text/css,body%20%7B%0Abackground%2Dcolor%3A%20%23fff%3B%0Amargin%3A%201em%20auto%3B%0Amax%2Dwidth%3A%20700px%3B%0Aoverflow%3A%20visible%3B%0Apadding%2Dleft%3A%202em%3B%0Apadding%2Dright%3A%202em%3B%0Afont%2Dfamily%3A%20%22Open%20Sans%22%2C%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0Afont%2Dsize%3A%2014px%3B%0Aline%2Dheight%3A%201%2E35%3B%0A%7D%0A%23TOC%20%7B%0Aclear%3A%20both%3B%0Amargin%3A%200%200%2010px%2010px%3B%0Apadding%3A%204px%3B%0Awidth%3A%20400px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Aborder%2Dradius%3A%205px%3B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Afont%2Dsize%3A%2013px%3B%0Aline%2Dheight%3A%201%2E3%3B%0A%7D%0A%23TOC%20%2Etoctitle%20%7B%0Afont%2Dweight%3A%20bold%3B%0Afont%2Dsize%3A%2015px%3B%0Amargin%2Dleft%3A%205px%3B%0A%7D%0A%23TOC%20ul%20%7B%0Apadding%2Dleft%3A%2040px%3B%0Amargin%2Dleft%3A%20%2D1%2E5em%3B%0Amargin%2Dtop%3A%205px%3B%0Amargin%2Dbottom%3A%205px%3B%0A%7D%0A%23TOC%20ul%20ul%20%7B%0Amargin%2Dleft%3A%20%2D2em%3B%0A%7D%0A%23TOC%20li%20%7B%0Aline%2Dheight%3A%2016px%3B%0A%7D%0Atable%20%7B%0Amargin%3A%201em%20auto%3B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dcolor%3A%20%23DDDDDD%3B%0Aborder%2Dstyle%3A%20outset%3B%0Aborder%2Dcollapse%3A%20collapse%3B%0A%7D%0Atable%20th%20%7B%0Aborder%2Dwidth%3A%202px%3B%0Apadding%3A%205px%3B%0Aborder%2Dstyle%3A%20inset%3B%0A%7D%0Atable%20td%20%7B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dstyle%3A%20inset%3B%0Aline%2Dheight%3A%2018px%3B%0Apadding%3A%205px%205px%3B%0A%7D%0Atable%2C%20table%20th%2C%20table%20td%20%7B%0Aborder%2Dleft%2Dstyle%3A%20none%3B%0Aborder%2Dright%2Dstyle%3A%20none%3B%0A%7D%0Atable%20thead%2C%20table%20tr%2Eeven%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Ap%20%7B%0Amargin%3A%200%2E5em%200%3B%0A%7D%0Ablockquote%20%7B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Apadding%3A%200%2E25em%200%2E75em%3B%0A%7D%0Ahr%20%7B%0Aborder%2Dstyle%3A%20solid%3B%0Aborder%3A%20none%3B%0Aborder%2Dtop%3A%201px%20solid%20%23777%3B%0Amargin%3A%2028px%200%3B%0A%7D%0Adl%20%7B%0Amargin%2Dleft%3A%200%3B%0A%7D%0Adl%20dd%20%7B%0Amargin%2Dbottom%3A%2013px%3B%0Amargin%2Dleft%3A%2013px%3B%0A%7D%0Adl%20dt%20%7B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0Aul%20%7B%0Amargin%2Dtop%3A%200%3B%0A%7D%0Aul%20li%20%7B%0Alist%2Dstyle%3A%20circle%20outside%3B%0A%7D%0Aul%20ul%20%7B%0Amargin%2Dbottom%3A%200%3B%0A%7D%0Apre%2C%20code%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0Aborder%2Dradius%3A%203px%3B%0Acolor%3A%20%23333%3B%0Awhite%2Dspace%3A%20pre%2Dwrap%3B%20%0A%7D%0Apre%20%7B%0Aborder%2Dradius%3A%203px%3B%0Amargin%3A%205px%200px%2010px%200px%3B%0Apadding%3A%2010px%3B%0A%7D%0Apre%3Anot%28%5Bclass%5D%29%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Acode%20%7B%0Afont%2Dfamily%3A%20Consolas%2C%20Monaco%2C%20%27Courier%20New%27%2C%20monospace%3B%0Afont%2Dsize%3A%2085%25%3B%0A%7D%0Ap%20%3E%20code%2C%20li%20%3E%20code%20%7B%0Apadding%3A%202px%200px%3B%0A%7D%0Adiv%2Efigure%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0Aimg%20%7B%0Abackground%2Dcolor%3A%20%23FFFFFF%3B%0Apadding%3A%202px%3B%0Aborder%3A%201px%20solid%20%23DDDDDD%3B%0Aborder%2Dradius%3A%203px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Amargin%3A%200%205px%3B%0A%7D%0Ah1%20%7B%0Amargin%2Dtop%3A%200%3B%0Afont%2Dsize%3A%2035px%3B%0Aline%2Dheight%3A%2040px%3B%0A%7D%0Ah2%20%7B%0Aborder%2Dbottom%3A%204px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Apadding%2Dbottom%3A%202px%3B%0Afont%2Dsize%3A%20145%25%3B%0A%7D%0Ah3%20%7B%0Aborder%2Dbottom%3A%202px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Afont%2Dsize%3A%20120%25%3B%0A%7D%0Ah4%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23f7f7f7%3B%0Amargin%2Dleft%3A%208px%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Ah5%2C%20h6%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23ccc%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Aa%20%7B%0Acolor%3A%20%230033dd%3B%0Atext%2Ddecoration%3A%20none%3B%0A%7D%0Aa%3Ahover%20%7B%0Acolor%3A%20%236666ff%3B%20%7D%0Aa%3Avisited%20%7B%0Acolor%3A%20%23800080%3B%20%7D%0Aa%3Avisited%3Ahover%20%7B%0Acolor%3A%20%23BB00BB%3B%20%7D%0Aa%5Bhref%5E%3D%22http%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0Aa%5Bhref%5E%3D%22https%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0A%0Acode%20%3E%20span%2Ekw%20%7B%20color%3A%20%23555%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Edt%20%7B%20color%3A%20%23902000%3B%20%7D%20%0Acode%20%3E%20span%2Edv%20%7B%20color%3A%20%2340a070%3B%20%7D%20%0Acode%20%3E%20span%2Ebn%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Efl%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Ech%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Est%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Eco%20%7B%20color%3A%20%23888888%3B%20font%2Dstyle%3A%20italic%3B%20%7D%20%0Acode%20%3E%20span%2Eot%20%7B%20color%3A%20%23007020%3B%20%7D%20%0Acode%20%3E%20span%2Eal%20%7B%20color%3A%20%23ff0000%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Efu%20%7B%20color%3A%20%23900%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Eer%20%7B%20color%3A%20%23a61717%3B%20background%2Dcolor%3A%20%23e3d2d2%3B%20%7D%20%0A" type="text/css" />
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Get started with isoniche</h1>
+
+
+
+<p><strong>isoniche</strong> estimates the habitat niche breadth of species from counts in several habitats, corrected for abundance. Classic indices (Levins’ B, 1 - Gini of habitat proportions, Shannon…) make rare species look like specialists: when a species is rare, its few individuals sit in its preferred habitat; when it is abundant, it spills into others. isoniche uses <em>isodars</em>, the relationships between a species’ densities in pairs of habitats, to predict where individuals settle at any total abundance, and reports two numbers per species:</p>
+<ul>
+<li><strong>density-independent (DI) niche breadth</strong>: how widely the species uses habitats when it is rare, at the <em>spillover abundance</em> where it first occupies all the habitats it uses;</li>
+<li><strong>density-dependent (DD) niche breadth</strong>: how widely it uses habitats when it is abundant.</li>
+</ul>
+<p>Both are on a 0-1 scale (0: one habitat only; 1: equal use of all habitats) and, unlike classic indices, they can be compared among species that differ in abundance.</p>
+<p>This vignette walks through a complete analysis. The other vignettes go into more detail:</p>
+<ul>
+<li><code>vignette(&quot;data-preparation&quot;)</code>: data formats, effort, choosing habitats, absent habitats, grouping sites;</li>
+<li><code>vignette(&quot;diagnostics&quot;)</code>: when to trust an estimate and what to do when a species is flagged;</li>
+<li><code>vignette(&quot;method&quot;)</code>: how the method works (Granot, Dubiner &amp; Belmaker 2026).</li>
+</ul>
+<div id="what-you-need" class="section level2">
+<h2>What you need</h2>
+<p>Counts of each species in two or more habitats, in many <em>replicates</em>: sites, or repeated surveys of the same site. Replicates should span a range of abundances, because isodars are estimated from how abundance in one habitat changes with abundance in another. As a rule of thumb, aim for at least 10 replicates per species, most of them sampling every habitat.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(isoniche)</span></code></pre></div>
+</div>
+<div id="your-data" class="section level2">
+<h2>1. Your data</h2>
+<p>isoniche works on data in long format, one row per species x site x habitat, with the number of individuals counted. A habitat not sampled at a site simply has no row; a habitat sampled where the species was not found should have a row with a count of 0.</p>
+<p>The package includes counts of 325 reef fish species in three habitats (barrier reef, fringing reef, outer slope) at 13 sites around Moorea, French Polynesia:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(moorea_fish)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 6 x 4</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   species                   site      habitat       abundance</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   &lt;chr&gt;                     &lt;chr&gt;     &lt;chr&gt;             &lt;int&gt;</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 Abudefduf septemfasciatus Afareaitu barrier_reef          0</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2 Abudefduf septemfasciatus Afareaitu fringing_reef         1</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3 Abudefduf septemfasciatus Afareaitu outer_slope           0</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4 Abudefduf septemfasciatus Aroa      barrier_reef          8</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5 Abudefduf septemfasciatus Aroa      fringing_reef         7</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6 Abudefduf septemfasciatus Aroa      outer_slope           0</span></span></code></pre></div>
+<p>If your data are a community matrix (samples x species, as used by <strong>vegan</strong>) with a separate table describing each sample, convert them with <code>community_to_long()</code>:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>comm <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">12</span>, <span class="dv">0</span>, <span class="dv">3</span>,</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>                  <span class="dv">8</span>, <span class="dv">2</span>, <span class="dv">0</span>,</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>                  <span class="dv">0</span>, <span class="dv">5</span>, <span class="dv">9</span>),</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>               <span class="at">nrow =</span> <span class="dv">3</span>, <span class="at">byrow =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>               <span class="at">dimnames =</span> <span class="fu">list</span>(<span class="cn">NULL</span>, <span class="fu">c</span>(<span class="st">&quot;sp_a&quot;</span>, <span class="st">&quot;sp_b&quot;</span>, <span class="st">&quot;sp_c&quot;</span>)))</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>samples <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">site =</span> <span class="fu">c</span>(<span class="st">&quot;north&quot;</span>, <span class="st">&quot;north&quot;</span>, <span class="st">&quot;south&quot;</span>),</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>                      <span class="at">habitat =</span> <span class="fu">c</span>(<span class="st">&quot;reef&quot;</span>, <span class="st">&quot;lagoon&quot;</span>, <span class="st">&quot;reef&quot;</span>))</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="fu">community_to_long</span>(comm, samples, <span class="at">site =</span> <span class="st">&quot;site&quot;</span>, <span class="at">habitat =</span> <span class="st">&quot;habitat&quot;</span>)</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 9 x 5</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   species site  habitat abundance effort</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   &lt;chr&gt;   &lt;chr&gt; &lt;chr&gt;       &lt;dbl&gt;  &lt;dbl&gt;</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 sp_a    north lagoon          8      1</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2 sp_a    north reef           12      1</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3 sp_a    south reef            0      1</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4 sp_b    north lagoon          2      1</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5 sp_b    north reef            0      1</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6 sp_b    south reef            5      1</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 7 sp_c    north lagoon          0      1</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 8 sp_c    north reef            3      1</span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 9 sp_c    south reef            9      1</span></span></code></pre></div>
+<p>Several samples from the same site and habitat are pooled, and their effort (here the number of samples) is summed into an <code>effort</code> column. If samples differ in effort, for example in transect area, give that column to <code>community_to_long()</code> and pass it on as <code>effort =</code> to the functions below; set <code>reference_effort</code> to a natural unit such as one standard transect. See <code>vignette(&quot;data-preparation&quot;)</code>.</p>
+</div>
+<div id="check-coverage" class="section level2">
+<h2>2. Check coverage</h2>
+<p>Before estimating anything, check how well each species was sampled:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>cov <span class="ot">&lt;-</span> <span class="fu">check_coverage</span>(moorea_fish, <span class="at">species =</span> <span class="st">&quot;species&quot;</span>, <span class="at">site =</span> <span class="st">&quot;site&quot;</span>,</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>                      <span class="at">habitat =</span> <span class="st">&quot;habitat&quot;</span>, <span class="at">abundance =</span> <span class="st">&quot;abundance&quot;</span>)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>cov[cov<span class="sc">$</span>species <span class="sc">==</span> <span class="st">&quot;Chaetodon ornatissimus&quot;</span>, ]</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 3 x 8</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   species     habitat n_sites n_complete n_sampled n_occupied total_count status</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   &lt;chr&gt;       &lt;chr&gt;     &lt;int&gt;      &lt;int&gt;     &lt;dbl&gt;      &lt;dbl&gt;       &lt;dbl&gt; &lt;chr&gt; </span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 Chaetodon ~ barrie~      13         13        13         13         136 used  </span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2 Chaetodon ~ fringi~      13         13        13         10         155 used  </span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3 Chaetodon ~ outer_~      13         13        13         13         301 used</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(cov<span class="sc">$</span>status)</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;       absent undersampled         used </span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;          148          177          650</span></span></code></pre></div>
+<p>For each species and habitat, <code>n_sites</code> is the number of sites where the species was recorded, <code>n_occupied</code> the number where it was found in this habitat, and <code>status</code> says how the habitat will be treated: <code>&quot;used&quot;</code>, <code>&quot;absent&quot;</code> (never found in it although it was sampled at several sites where the species occurred; it counts as 0 and lowers niche breadth) or <code>&quot;undersampled&quot;</code> (no records, but too few sites to tell).</p>
+</div>
+<div id="estimate-niche-breadth" class="section level2">
+<h2>3. Estimate niche breadth</h2>
+<p>We analyse 12 species that were recorded at almost every site, in every habitat. <code>niche_breadth()</code> fits the isodars of every species, computes DI and DD niche breadth and the spillover abundance, and gives bootstrap confidence intervals by resampling whole sites (<code>n_boot</code> replicates; we use 99 to keep this vignette fast, but use 999 or more for publication):</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>species <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;Balistapus undulatus&quot;</span>, <span class="st">&quot;Chaetodon ornatissimus&quot;</span>,</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>             <span class="st">&quot;Chaetodon ulietensis&quot;</span>, <span class="st">&quot;Ctenochaetus binotatus&quot;</span>,</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>             <span class="st">&quot;Dascyllus flavicaudus&quot;</span>, <span class="st">&quot;Forcipiger longirostris&quot;</span>,</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>             <span class="st">&quot;Halichoeres marginatus&quot;</span>, <span class="st">&quot;Heniochus chrysostomus&quot;</span>,</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>             <span class="st">&quot;Parupeneus multifasciatus&quot;</span>, <span class="st">&quot;Sargocentron microstoma&quot;</span>,</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>             <span class="st">&quot;Scarus schlegeli&quot;</span>, <span class="st">&quot;Zebrasoma scopas&quot;</span>)</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>fish <span class="ot">&lt;-</span> moorea_fish[moorea_fish<span class="sc">$</span>species <span class="sc">%in%</span> species, ]</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>nb <span class="ot">&lt;-</span> <span class="fu">niche_breadth</span>(fish, <span class="at">species =</span> <span class="st">&quot;species&quot;</span>, <span class="at">site =</span> <span class="st">&quot;site&quot;</span>,</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>                    <span class="at">habitat =</span> <span class="st">&quot;habitat&quot;</span>, <span class="at">abundance =</span> <span class="st">&quot;abundance&quot;</span>,</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>                    <span class="at">n_boot =</span> <span class="dv">99</span>, <span class="at">seed =</span> <span class="dv">1</span>)</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>nb</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 12 x 35</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    species      method n_sites nb_di nb_di_lower nb_di_upper spillover_abundance</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    &lt;chr&gt;        &lt;chr&gt;    &lt;int&gt; &lt;dbl&gt;       &lt;dbl&gt;       &lt;dbl&gt;               &lt;dbl&gt;</span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  1 Balistapus ~ pairw~      13 0.115      0.0933       0.547                  36</span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  2 Chaetodon o~ pairw~      13 0.335      0.200        0.457                  27</span></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  3 Chaetodon u~ pairw~      12 0.534      0.338        0.784                  14</span></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  4 Ctenochaetu~ pairw~      11 0.543      0.332        0.957                  11</span></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  5 Dascyllus f~ pairw~      13 0.211      0.0730       0.489                  60</span></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  6 Forcipiger ~ pairw~      13 0.687      0.0930       0.937                   5</span></span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  7 Halichoeres~ pairw~      13 0.692      0.480        0.764                  10</span></span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  8 Heniochus c~ pairw~      13 0.337      0.133        0.596                  14</span></span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  9 Parupeneus ~ pairw~      13 0.225      0.174        0.551                  89</span></span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10 Sargocentro~ pairw~      13 0.609      0.508        0.787                  13</span></span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 11 Scarus schl~ pairw~      13 0.143      0.0573       0.625                  30</span></span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 12 Zebrasoma s~ pairw~      13 0.181      0.117        0.396                 150</span></span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # i 28 more variables: spillover_lower &lt;dbl&gt;, spillover_upper &lt;dbl&gt;,</span></span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #   nb_dd &lt;dbl&gt;, nb_dd_lower &lt;dbl&gt;, nb_dd_upper &lt;dbl&gt;, dependent_at &lt;dbl&gt;,</span></span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #   var_explained &lt;dbl&gt;, intercept_p &lt;dbl&gt;, absent &lt;chr&gt;, abandoned &lt;chr&gt;,</span></span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #   reversals &lt;list&gt;, n_boot_valid &lt;int&gt;, flags &lt;chr&gt;, flag_few_sites &lt;lgl&gt;,</span></span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #   flag_few_pair_sites &lt;lgl&gt;, flag_low_abundance &lt;lgl&gt;,</span></span>
+<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #   flag_di_extrapolation &lt;lgl&gt;, flag_dd_extrapolation &lt;lgl&gt;,</span></span>
+<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; #   flag_abandoned &lt;lgl&gt;, flag_reversal &lt;lgl&gt;, flag_poor_fit &lt;lgl&gt;, ...</span></span>
+<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 7 species flagged (not counting abandoned habitats or reversals); see summary()</span></span>
+<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Abundances are per site (equal effort in every site and habitat).</span></span></code></pre></div>
+<p>The result is a table with one row per species. The main columns:</p>
+<ul>
+<li><code>nb_di</code> (with <code>nb_di_lower</code>, <code>nb_di_upper</code>): DI niche breadth and its confidence interval;</li>
+<li><code>spillover_abundance</code>: the total abundance (individuals per sampling unit, here per site) at which the species first occupies every habitat it uses; DI niche breadth is measured there;</li>
+<li><code>nb_dd</code>: DD niche breadth, the limit at high abundance;</li>
+<li><code>flags</code>: diagnostics raised for the species.</li>
+</ul>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>res <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(nb[<span class="fu">c</span>(<span class="st">&quot;species&quot;</span>, <span class="st">&quot;nb_di&quot;</span>, <span class="st">&quot;nb_di_lower&quot;</span>, <span class="st">&quot;nb_di_upper&quot;</span>,</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>                          <span class="st">&quot;spillover_abundance&quot;</span>, <span class="st">&quot;nb_dd&quot;</span>, <span class="st">&quot;nb_dd_lower&quot;</span>,</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>                          <span class="st">&quot;nb_dd_upper&quot;</span>)])</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>res[<span class="sc">-</span><span class="dv">1</span>] <span class="ot">&lt;-</span> <span class="fu">round</span>(res[<span class="sc">-</span><span class="dv">1</span>], <span class="dv">2</span>)</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>res[<span class="fu">order</span>(<span class="sc">-</span>res<span class="sc">$</span>nb_di), ]</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                      species nb_di nb_di_lower nb_di_upper spillover_abundance</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6    Forcipiger longirostris  0.69        0.09        0.94                   5</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 7     Halichoeres marginatus  0.69        0.48        0.76                  10</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10   Sargocentron microstoma  0.61        0.51        0.79                  13</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4     Ctenochaetus binotatus  0.54        0.33        0.96                  11</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3       Chaetodon ulietensis  0.53        0.34        0.78                  14</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 8     Heniochus chrysostomus  0.34        0.13        0.60                  14</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2     Chaetodon ornatissimus  0.33        0.20        0.46                  27</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 9  Parupeneus multifasciatus  0.23        0.17        0.55                  89</span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5      Dascyllus flavicaudus  0.21        0.07        0.49                  60</span></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 12          Zebrasoma scopas  0.18        0.12        0.40                 150</span></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 11          Scarus schlegeli  0.14        0.06        0.62                  30</span></span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1       Balistapus undulatus  0.12        0.09        0.55                  36</span></span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    nb_dd nb_dd_lower nb_dd_upper</span></span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6   0.08        0.00        0.58</span></span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 7   0.62        0.00        0.84</span></span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10  0.00        0.00        0.19</span></span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4   0.11        0.00        0.45</span></span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3   0.48        0.00        0.49</span></span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 8   0.11        0.00        0.25</span></span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2   0.64        0.29        0.89</span></span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 9   0.28        0.01        0.54</span></span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5   0.01        0.00        0.06</span></span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 12  0.22        0.00        0.43</span></span>
+<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 11  0.40        0.30        0.49</span></span>
+<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1   0.40        0.02        0.56</span></span></code></pre></div>
+<p>A species with high DI niche breadth uses several habitats even when rare: its isodar intercepts are small, so it has no strongly preferred habitat. A species with high DD niche breadth spreads evenly among habitats when abundant: its isodar slopes are close to 1, so its habitats fill at similar rates. The two need not agree; a species can be a specialist when rare and a generalist when abundant, or the reverse.</p>
+</div>
+<div id="check-the-diagnostics" class="section level2">
+<h2>4. Check the diagnostics</h2>
+<p>Every species gets logical <code>flag_*</code> columns. <code>summary()</code> counts them and explains what to do about each:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(nb)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Niche breadth for 12 species</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   DD niche breadth at: asymptote; bootstrap replicates: 99</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   with DI and DD estimates: 12</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   without warning flags:    5</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Estimates (quartiles):</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                       min    q25 median    q75     max</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; nb_di               0.115  0.204  0.336  0.559   0.692</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; spillover_abundance 5.000 12.500 20.500 42.000 150.000</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; nb_dd               0.000  0.100  0.249  0.424   0.637</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Flags raised (species):</span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   unstable_bootstrap     7  many bootstrap replicates failed, or a confidence interval is very wide</span></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                             -&gt; increase n_boot; if still wide, the data cannot resolve niche breadth</span></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   intercept_noise        1  isodar intercepts do not differ from sampling noise</span></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                             -&gt; no evidence that niche breadth changes with abundance; report DD niche breadth</span></span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   reversal              12  habitats change rank along the niche breadth curve</span></span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                             -&gt; informational: compare species at a stated abundance (see iai_curve())</span></span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   abandoned              6  a used habitat is abandoned at high density</span></span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;                             -&gt; informational: the habitat counts for DI but not for DD niche breadth</span></span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; See vignette(&quot;diagnostics&quot;) for details. Thresholds are set with niche_breadth(diagnostics = ).</span></span></code></pre></div>
+<p><code>reversal</code> and <code>abandoned</code> describe the species rather than a problem: the ranking of habitats changes with abundance, or a habitat used when the species is rare is left empty when it is abundant. The others are warnings. Here most species are flagged <code>unstable_bootstrap</code>: with only 13 sites, the confidence intervals are wide (see the table above), and several DD intervals reach 0. This is a property of the data, not of the method: niche breadth is estimated from the spread of densities across sites, and 13 sites constrain it only loosely. More replicates narrow the intervals.</p>
+<p>To keep only species without warnings:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>s <span class="ot">&lt;-</span> <span class="fu">summary</span>(nb)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>clean <span class="ot">&lt;-</span> nb[nb<span class="sc">$</span>species <span class="sc">%in%</span> s<span class="sc">$</span>clean, ]</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(clean)</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 5</span></span></code></pre></div>
+<p>See <code>vignette(&quot;diagnostics&quot;)</code> for each flag.</p>
+</div>
+<div id="niche-breadth-across-abundances" class="section level2">
+<h2>5. Niche breadth across abundances</h2>
+<p>DI and DD niche breadth are the two ends of a curve: niche breadth as a function of total abundance, much like a rarefaction curve. <code>iai_curve()</code> computes it, and <code>plot()</code> draws it (here for four species):</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>curves <span class="ot">&lt;-</span> <span class="fu">iai_curve</span>(nb, <span class="at">n_boot =</span> <span class="dv">49</span>, <span class="at">seed =</span> <span class="dv">1</span>)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(curves, <span class="at">species =</span> <span class="fu">c</span>(<span class="st">&quot;Chaetodon ornatissimus&quot;</span>, <span class="st">&quot;Forcipiger longirostris&quot;</span>,</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>                         <span class="st">&quot;Scarus schlegeli&quot;</span>, <span class="st">&quot;Zebrasoma scopas&quot;</span>))</span></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<p>Each curve starts at the species’ spillover abundance (filled point, DI niche breadth) and approaches DD niche breadth (dash on the right); dotted lines are the bootstrap band and crosses mark preference reversals.</p>
+</div>
+<div id="compare-species" class="section level2">
+<h2>6. Compare species</h2>
+<p>Because the estimates do not depend on how abundant a species happened to be, they can be compared among species, or related to traits. Ranks by DI and by DD niche breadth can differ:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(nb<span class="sc">$</span>nb_di, nb<span class="sc">$</span>nb_dd, <span class="at">pch =</span> <span class="dv">19</span>, <span class="at">xlim =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>),</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">&quot;DI niche breadth&quot;</span>, <span class="at">ylab =</span> <span class="st">&quot;DD niche breadth&quot;</span>)</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="at">lty =</span> <span class="dv">2</span>)</span></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(nb<span class="sc">$</span>nb_di, nb<span class="sc">$</span>nb_dd, <span class="at">method =</span> <span class="st">&quot;spearman&quot;</span>)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] -0.1608392</span></span></code></pre></div>
+<p>Where two species’ curves cross, which one is the broader generalist depends on the abundance at which they are compared. These crossings are listed in a table:</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(<span class="fu">attr</span>(curves, <span class="st">&quot;crossings&quot;</span>))</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 6 x 4</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   species_1            species_2                 total_abundance niche_breadth</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   &lt;chr&gt;                &lt;chr&gt;                               &lt;dbl&gt;         &lt;dbl&gt;</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 1 Balistapus undulatus Ctenochaetus binotatus               65.4         0.263</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 2 Balistapus undulatus Dascyllus flavicaudus               157.          0.345</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 3 Balistapus undulatus Forcipiger longirostris              37.6         0.134</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4 Balistapus undulatus Heniochus chrysostomus               71.4         0.274</span></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5 Balistapus undulatus Parupeneus multifasciatus            95.1         0.307</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6 Balistapus undulatus Parupeneus multifasciatus           710.          0.391</span></span></code></pre></div>
+</div>
+<div id="reporting" class="section level2">
+<h2>7. Reporting</h2>
+<p>When reporting results, state:</p>
+<ul>
+<li>the habitats included, and which were treated as absent for each species;</li>
+<li>the sampling unit of abundance (<code>reference_effort</code>; see <code>vignette(&quot;data-preparation&quot;)</code>): DI niche breadth and spillover abundance depend on it, DD niche breadth does not;</li>
+<li>the isodar method (<code>dim</code>, by default pairwise isodars with inverse-variance weights) and where DD niche breadth was evaluated (<code>dependent_at</code>, by default the asymptote);</li>
+<li>the number of bootstrap replicates and the diagnostic thresholds, and how flagged species were handled;</li>
+<li>the package version (<code>packageVersion(&quot;isoniche&quot;)</code>) and the paper (<code>citation(&quot;isoniche&quot;)</code>).</li>
+</ul>
+</div>
+<div id="references" class="section level2">
+<h2>References</h2>
+<p>Granot, I., Dubiner, S. &amp; Belmaker, J. (2026). Why abundance-based indices of niche breadth are biased, and what can be done to improve them. <em>Ecology Letters</em> (in revision). Itai Granot and Shahar Dubiner contributed equally.</p>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
